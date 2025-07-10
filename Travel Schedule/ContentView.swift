@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CoreData
+import OpenAPIURLSession
 
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -18,6 +19,7 @@ struct ContentView: View {
 
     var body: some View {
         NavigationView {
+            
             List {
                 ForEach(items) { item in
                     NavigationLink {
@@ -37,9 +39,15 @@ struct ContentView: View {
                         Label("Add Item", systemImage: "plus")
                     }
                 }
+                ToolbarItem(placement: .navigationBarLeading) {
+                      Button("Test API") {
+                          testFetchStations()
+                      }
+                  }
             }
             Text("Select an item")
         }
+
     }
 
     private func addItem() {
@@ -56,6 +64,7 @@ struct ContentView: View {
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
         }
+        
     }
 
     private func deleteItems(offsets: IndexSet) {
@@ -73,6 +82,30 @@ struct ContentView: View {
         }
     }
 }
+func testFetchStations() {
+    
+    Task {
+        do {
+            let client = Client(serverURL: try Servers.Server1.url(), transport: URLSessionTransport())
+            
+            let service = NearestStationsService(client: client, apikey: "94795250-37d7-42dd-aa66-e6c2228ede23")
+            
+            
+            print("Fetching station...")
+            let stations = try await service.getNearestStations(lat: 59.864177, // Пример координат
+                                                                lng: 30.319163, // Пример координат
+                                                                distance: 50    // Пример дистанции
+                                                            )
+            print("Successfully fetched stations: \(stations)")
+             } catch {
+                 // 5. Если произошла ошибка на любом из этапов (создание клиента, вызов сервиса, обработка ответа),
+                 //    она будет поймана здесь, и мы выведем её в консоль
+                 print("Error fetching stations: \(error)")
+                 // В реальном приложении здесь должна быть логика обработки ошибок (показ алерта и т. д.)
+             }
+         }
+}
+
 
 private let itemFormatter: DateFormatter = {
     let formatter = DateFormatter()
