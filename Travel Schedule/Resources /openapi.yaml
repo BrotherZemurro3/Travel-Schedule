@@ -213,13 +213,68 @@ get:
             application/json:
               schema:
                 $ref: '#/components/schemas/ScheduleResponse'
-      
-      
-      
-      
-    
-    
-    
+      /v3.0/thread/:
+    get:
+      tags:
+        - getRouteStations
+      summary: Список станций следования
+      operationId: getRouteStations
+      parameters:
+        - name: apikey
+          in: query
+          description: API key
+          required: true
+          schema:
+            type: string
+        - name: uid
+          in: query
+          description: Идентификатор нитки
+          required: true
+          schema:
+            type: string
+        - name: from
+          in: query
+          description: Код станции отправления
+          required: false
+          schema:
+            type: string
+        - name: to
+          in: query
+          description: Код станции прибытия
+          required: false
+          schema:
+            type: string
+        - name: format
+          in: query
+          description: Формат ответа (json по умолчанию)
+          required: false
+          schema:
+            type: string
+        - name: lang
+          in: query
+          description: Язык возвращаемой информации (например, ru_RU)
+          required: false
+          schema:
+            type: string
+        - name: date
+          in: query
+          description: Дата, на которую необходимо получить список станций (формат YYYY-MM-DD)
+          required: false
+          schema:
+            type: string
+        - name: show_systems
+          in: query
+          description: Система кодирования для ответа (например, yandex, esr, all)
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ThreadStationsResponse'
     /v3.0/nearest_stations/:
     get:
         tags:
