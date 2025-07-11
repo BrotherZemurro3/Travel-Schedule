@@ -325,7 +325,56 @@ get:
             application/json:
                 schema:
                 $ref: '#/components/schemas/Stations'
-    
+      /v3.0/nearest_settlement/:
+    get:
+      tags:
+        - getNearestCity
+      summary: Ближайший город
+      operationId: getNearestCity
+      parameters:
+        - name: apikey
+          in: query
+          description: API key
+          required: true
+          schema:
+            type: string
+        - name: lat
+          in: query
+          description: Широта согласно WGS84
+          required: true
+          schema:
+            type: number
+        - name: lng
+          in: query
+          description: Долгота согласно WGS84
+          required: true
+          schema:
+            type: number
+        - name: distance
+          in: query
+          description: Радиус поиска ближайшего города (в километрах)
+          required: false
+          schema:
+            type: integer
+        - name: lang
+          in: query
+          description: Язык возвращаемой информации (например, ru_RU)
+          required: false
+          schema:
+            type: string
+        - name: format
+          in: query
+          description: Формат ответа (json по умолчанию)
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NearestCityResponse'
     /v3.0/stations_list/:
     get:
         tags:
