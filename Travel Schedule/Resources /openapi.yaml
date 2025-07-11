@@ -1,224 +1,352 @@
 openapi: 3.0.3
 info:
-  title: API.Rasp.Yandex.Net
-  description: API Яндекс.Расписаний
-  version: 3.0.0
+    title: API.Rasp.Yandex.Net
+    description: API Яндекс.Расписаний
+    version: 3.0.0
 servers:
-  - url: https://api.rasp.yandex.net
+    - url: https://api.rasp.yandex.net
 tags:
-  - name: Список всех доступных станций
+    - name: Расписание рейсов между станциями
+    description: Получение списка рейсов следующих от указанной станции отправления к указанной станции прибытия и информация по каждому рейсу
+    - name: Список всех доступных станций
     description: Получение списка всех доступных станций
-  - name: Список ближайших станций
+    - name: Список ближайших станций
     description: Получение списка ближайших станций
-  - name: Копирайт и баннеры
+    - name: Копирайт и баннеры
     description: Получение копирайта и баннеров Яндекс Расписаний
 
 paths:
-  /v3.0/nearest_stations/:
+
+/v3.0/search/:
+get:
+    tags:
+    - getSchedualBetweenStations
+    summary: Расписание рейсов между станциями
+    operationId: getSchedualBetweenStations
+    parameters:
+    - name: apikey
+    in: query
+    description: API key
+    required: true
+    schema:
+    type: string
+    - name: from
+    in: query
+    description: Код станции отправления
+    required: true
+    schema:
+        type: string
+    - name: to
+    in: query
+    description: Код станции прибытия
+    required: true
+    schema:
+        type: string
+    - name: format
+    in: query
+    description: json или xml
+    required: false
+    schema:
+    type: string
+    - name: lang
+    in: query
+    description: lang
+    required: false
+    schema:
+    type: string
+    - name: date
+    in: query
+    description: Дата в формате YYYY-MM-DD
+    required: true
+    schema:
+        type: string
+        format: date
+    - name: transportType
+    in: query
+    description: Тип транспортного средства.
+    required: false
+    schema:
+        type: string
+    - name: system
+    in: query
+        description: |
+            Система кодирования станций. Возможные значения:
+            - yandex (по умолчанию) - коды Яндекс Расписаний
+            - iata - коды IATA
+            - sirena - коды Сирена
+            - express - коды Экспресс-3
+            - esr - коды ЕСР
+    required: false
+    schema:
+        type: string
+        enum: [yandex, iata, sirena, express, esr]
+        default: yandex
+    -name showSystems
+    in: query
+    description: |
+            Системы кодирования, коды которых нужно вернуть в ответе.
+            Возможные значения:
+            - yandex (по умолчанию)
+            - esr
+    required: false
+    schema:
+        type: string
+        enum: [yandex,esr]
+        default: yandex
+    -name: offset
+    in: query
+    description: Смещение относительно первого результата поиска
+    required: false
+    schema:
+        type: integer
+        default: 0
+        minimum: 0
+    -name: limit
+    in: query
+    description: Максимальное количество результатов
+    required: false
+    schema:
+        type: integer
+        default: 100
+        minimum: 1
+        maximum: 1000
+    -name: add_days_mask
+    in: query
+    description: Возвращать ли календарь хождения
+    required: false
+    schema:
+        type: boolean
+        default: false
+    -name result_timezone
+    in: query
+    description: Часовой пояс для результатов (идентификатор tz)
+    required: false
+    schema:
+        type: string
+        example: "Europe/Moscow"
+    -name: transfers
+    in: query
+    description: Разрешить маршруты с пересадками
+    required: false
+    schema:
+        type: boolean
+        default: false
+        responses:
+        "200":
+            description: Успешный ответ
+            content:
+            application/json:
+                schema:
+                $ref: '#/components/schemas/Segments'
+    
+    
+    
+    /v3.0/nearest_stations/:
     get:
-      tags:
+        tags:
         - getNearestStations
-      summary: Список ближайших станций
-      operationId: getNearestStations
-      parameters:
+        summary: Список ближайших станций
+        operationId: getNearestStations
+        parameters:
         - name: apikey
-          in: query
-          description: API key
-          required: true
-          schema:
+            in: query
+            description: API key
+            required: true
+            schema:
             type: string
         - name: lat
-          in: query
-          description: широта
-          required: true
-          schema:
+            in: query
+            description: широта
+            required: true
+            schema:
             type: number
         - name: lng
-          in: query
-          description: долгота
-          required: true
-          schema:
+            in: query
+            description: долгота
+            required: true
+            schema:
             type: number
         - name: distance
-          in: query
-          description: радиус охвата
-          required: true
-          schema:
+            in: query
+            description: радиус охвата
+            required: true
+            schema:
             type: integer
         - name: format
-          in: query
-          description: json или xml
-          required: false
-          schema:
+            in: query
+            description: json или xml
+            required: false
+            schema:
             type: string
         - name: lang
-          in: query
-          description: lang
-          required: false
-          schema:
+            in: query
+            description: lang
+            required: false
+            schema:
             type: string
-      responses:
+        responses:
         "200":
-          description: Успешный ответ
-          content:
+            description: Успешный ответ
+            content:
             application/json:
-              schema:
+                schema:
                 $ref: '#/components/schemas/Stations'
-
-  /v3.0/stations_list/:
+    
+    /v3.0/stations_list/:
     get:
-      tags:
+        tags:
         - getAllStations
-      summary: Список всех доступных станций
-      operationId: getAllStations
-      parameters:
+        summary: Список всех доступных станций
+        operationId: getAllStations
+        parameters:
         - name: apikey
-          in: query
-          description: API key
-          required: true
-          schema:
+            in: query
+            description: API key
+            required: true
+            schema:
             type: string
         - name: format
-          in: query
-          description: json или xml
-          required: false
-          schema:
+            in: query
+            description: json или xml
+            required: false
+            schema:
             type: string
         - name: lang
-          in: query
-          description: lang
-          required: false
-          schema:
+            in: query
+            description: lang
+            required: false
+            schema:
             type: string
-      responses:
+        responses:
         "200":
-          description: Успешный ответ
-          content:
+            description: Успешный ответ
+            content:
             application/json:
-              schema:
+                schema:
                 $ref: '#/components/schemas/AllStationsResponse'
-
-  /v3.0/copyright/:
+    
+    /v3.0/copyright/:
     get:
-      tags:
+        tags:
         - copyright
-      summary: Получить копирайт и баннеры
-      operationId: getCopyright
-      parameters:
+        summary: Получить копирайт и баннеры
+        operationId: getCopyright
+        parameters:
         - name: apikey
-          in: query
-          description: API key (можно передать в заголовке Authorization)
-          required: false
-          schema:
+            in: query
+            description: API key (можно передать в заголовке Authorization)
+            required: false
+            schema:
             type: string
         - name: format
-          in: query
-          description: Формат ответа (json/xml)
-          required: false
-          schema:
+            in: query
+            description: Формат ответа (json/xml)
+            required: false
+            schema:
             type: string
             enum: [json, xml]
             default: json
-      responses:
+        responses:
         "200":
-          description: success
-          content:
+            description: success
+            content:
             application/json:
-              schema:
+                schema:
                 $ref: '#/components/schemas/CopyrightResponse'
 
 components:
-  schemas:
+    schemas:
     Stations:
-      type: object
-      properties:
+        type: object
+        properties:
         pagination:
-          $ref: '#/components/schemas/Pagination'
+            $ref: '#/components/schemas/Pagination'
         stations:
-          type: array
-          items:
+            type: array
+            items:
             $ref: '#/components/schemas/Station'
     AllStationsResponse:
-      type: object
-      properties:
+        type: object
+        properties:
         pagination:
-          $ref: '#/components/schemas/Pagination'
+            $ref: '#/components/schemas/Pagination'
         stations:
-          type: array
-          items:
+            type: array
+            items:
             $ref: '#/components/schemas/Station'
     Pagination:
-      type: object
-      properties:
+        type: object
+        properties:
         total:
-          type: integer
+            type: integer
         limit:
-          type: integer
+            type: integer
         offset:
-          type: integer
+            type: integer
     Station:
-      type: object
-      properties:
+        type: object
+        properties:
         type:
-          type: string
+            type: string
         title:
-          type: string
+            type: string
         short_title:
-          type: string
+            type: string
         popular_title:
-          type: string
+            type: string
         code:
-          type: string
+            type: string
         lat:
-          type: number
+            type: number
         lng:
-          type: number
+            type: number
         station_type:
-          type: string
+            type: string
         station_type_name:
-          type: string
+            type: string
         transport_type:
-          type: string
+            type: string
         distance:
-          type: number
+            type: number
         majority:
-          type: integer
+            type: integer
         type_choices:
-          $ref: '#/components/schemas/Schedule'
+            $ref: '#/components/schemas/Schedule'
     Schedule:
-      type: object
-      properties:
+        type: object
+        properties:
         desktop_url:
-          type: string
+            type: string
         touch_url:
-          type: string
+            type: string
+            
     CopyrightResponse:
-      type: object
-      properties:
+        type: object
+        properties:
         copyright:
-          type: object
-          properties:
+            type: object
+            properties:
             logo_vm:
-              type: string
-              description: Вертикальный монохромный баннер (iframe)
+                type: string
+                description: Вертикальный монохромный баннер (iframe)
             url:
-              type: string
-              description: URL Яндекс Расписаний
+                type: string
+                description: URL Яндекс Расписаний
             logo_vd:
-              type: string
-              description: Вертикальный темный баннер
+                type: string
+                description: Вертикальный темный баннер
             logo_hy:
-              type: string
-              description: Горизонтальный желтый баннер
+                type: string
+                description: Горизонтальный желтый баннер
             logo_hd:
-              type: string
-              description: Горизонтальный темный баннер
+                type: string
+                description: Горизонтальный темный баннер
             logo_vy:
-              type: string
-              description: Вертикальный желтый баннер
+                type: string
+                description: Вертикальный желтый баннер
             text:
-              type: string
-              description: Уведомительный текст
+                type: string
+                description: Уведомительный текст
             logo_hm:
-              type: string
-              description: Горизонтальный монохромный баннер
+                type: string
+                description: Горизонтальный монохромный баннер
