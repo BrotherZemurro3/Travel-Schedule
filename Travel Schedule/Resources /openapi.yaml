@@ -6,10 +6,13 @@ info:
 servers:
   - url: https://api.rasp.yandex.net
 tags:
+  - name: Список всех доступных станций
+    description: Получение списка всех доступных станций
   - name: Список ближайших станций
-    description: Список ближайших станций
+    description: Получение списка ближайших станций
   - name: Копирайт и баннеры
     description: Получение копирайта и баннеров Яндекс Расписаний
+
 paths:
   /v3.0/nearest_stations/:
     get:
@@ -56,11 +59,44 @@ paths:
             type: string
       responses:
         "200":
-          description: success
+          description: Успешный ответ
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Stations'
+
+  /v3.0/stations_list/:
+    get:
+      tags:
+        - getAllStations
+      summary: Список всех доступных станций
+      operationId: getAllStations
+      parameters:
+        - name: apikey
+          in: query
+          description: API key
+          required: true
+          schema:
+            type: string
+        - name: format
+          in: query
+          description: json или xml
+          required: false
+          schema:
+            type: string
+        - name: lang
+          in: query
+          description: lang
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllStationsResponse'
 
   /v3.0/copyright/:
     get:
@@ -94,6 +130,15 @@ paths:
 components:
   schemas:
     Stations:
+      type: object
+      properties:
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        stations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Station'
+    AllStationsResponse:
       type: object
       properties:
         pagination:
@@ -147,8 +192,6 @@ components:
           type: string
         touch_url:
           type: string
-
-    # Новая схема для /copyright/
     CopyrightResponse:
       type: object
       properties:
