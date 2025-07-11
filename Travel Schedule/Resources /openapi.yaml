@@ -4,54 +4,56 @@ info:
   description: API Яндекс.Расписаний
   version: 3.0.0
 servers:
-- url: https://api.rasp.yandex.net
+  - url: https://api.rasp.yandex.net
 tags:
-- name: Список ближайших станций
-  description: Список ближайших станций
+  - name: Список ближайших станций
+    description: Список ближайших станций
+  - name: Копирайт и баннеры
+    description: Получение копирайта и баннеров Яндекс Расписаний
 paths:
   /v3.0/nearest_stations/:
     get:
       tags:
-      - getNearestStations
+        - getNearestStations
       summary: Список ближайших станций
       operationId: getNearestStations
       parameters:
-      - name: apikey
-        in: query
-        description: API key
-        required: true
-        schema:
-          type: string
-      - name: lat
-        in: query
-        description: широта
-        required: true
-        schema:
-          type: number
-      - name: lng
-        in: query
-        description: долгота
-        required: true
-        schema:
-          type: number
-      - name: distance
-        in: query
-        description: радиус охвата
-        required: true
-        schema:
-          type: integer
-      - name: format
-        in: query
-        description: json или xml
-        required: false
-        schema:
-          type: string
-      - name: lang
-        in: query
-        description: lang
-        required: false
-        schema:
-          type: string
+        - name: apikey
+          in: query
+          description: API key
+          required: true
+          schema:
+            type: string
+        - name: lat
+          in: query
+          description: широта
+          required: true
+          schema:
+            type: number
+        - name: lng
+          in: query
+          description: долгота
+          required: true
+          schema:
+            type: number
+        - name: distance
+          in: query
+          description: радиус охвата
+          required: true
+          schema:
+            type: integer
+        - name: format
+          in: query
+          description: json или xml
+          required: false
+          schema:
+            type: string
+        - name: lang
+          in: query
+          description: lang
+          required: false
+          schema:
+            type: string
       responses:
         "200":
           description: success
@@ -59,6 +61,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Stations'
+
+  /v3.0/copyright/:
+    get:
+      tags:
+        - copyright
+      summary: Получить копирайт и баннеры
+      operationId: getCopyright
+      parameters:
+        - name: apikey
+          in: query
+          description: API key (можно передать в заголовке Authorization)
+          required: false
+          schema:
+            type: string
+        - name: format
+          in: query
+          description: Формат ответа (json/xml)
+          required: false
+          schema:
+            type: string
+            enum: [json, xml]
+            default: json
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CopyrightResponse'
+
 components:
   schemas:
     Stations:
@@ -115,3 +147,35 @@ components:
           type: string
         touch_url:
           type: string
+
+    # Новая схема для /copyright/
+    CopyrightResponse:
+      type: object
+      properties:
+        copyright:
+          type: object
+          properties:
+            logo_vm:
+              type: string
+              description: Вертикальный монохромный баннер (iframe)
+            url:
+              type: string
+              description: URL Яндекс Расписаний
+            logo_vd:
+              type: string
+              description: Вертикальный темный баннер
+            logo_hy:
+              type: string
+              description: Горизонтальный желтый баннер
+            logo_hd:
+              type: string
+              description: Горизонтальный темный баннер
+            logo_vy:
+              type: string
+              description: Вертикальный желтый баннер
+            text:
+              type: string
+              description: Уведомительный текст
+            logo_hm:
+              type: string
+              description: Горизонтальный монохромный баннер
