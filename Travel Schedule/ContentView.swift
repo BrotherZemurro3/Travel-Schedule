@@ -62,6 +62,9 @@ struct ContentView: View {
                         Button("Test NearestStations") {
                             testFetchStations()
                         }
+                        Button("Test NearestCities"){
+                            testFetchNearestCities()
+                        }
                     }
                 }
             }
@@ -139,6 +142,20 @@ struct ContentView: View {
                 appendToConsole("Error fetching nearest stations: \(error.localizedDescription)")
             }
         }
+    }
+    private func testFetchNearestCities() {
+        appendToConsole("Starting Nearest Cities API test...")
+        Task {
+            do {
+                let client = Client(serverURL: try Servers.Server1.url(), transport: URLSessionTransport())
+                let service = NearestCityService(client: client, apikey: "94795250-37d7-42dd-aa66-e6c2228ede23")
+                let cities = try await service.getNearestCities(lat: 59.864177, lng: 30.319163)
+                appendToConsole("Successfully fetched \(cities) cities")
+            } catch {
+                appendToConsole("Error fetching cities: \(error.localizedDescription)")
+            }
+        }
+        
     }
     
     private let itemFormatter: DateFormatter = {
