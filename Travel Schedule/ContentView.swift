@@ -68,6 +68,9 @@ struct ContentView: View {
                         Button("Test Carrier Info"){
                             testCarrierInfo()
                         }
+                        Button("Test Copyright Info"){
+                            testCopyrightInfo()
+                        }
                     }
                 }
             }
@@ -172,6 +175,20 @@ struct ContentView: View {
                 }
         }
         
+    }
+    
+    private func testCopyrightInfo() {
+        appendToConsole("Starting Copyright Api test")
+        Task {
+            do {
+                let client = Client(serverURL: try Servers.Server1.url(), transport: URLSessionTransport())
+                let service = CopyrightService(client: client, apikey: "94795250-37d7-42dd-aa66-e6c2228ede23")
+                let copyright = try await service.getCopyright()
+                appendToConsole("Successfully fetched \(copyright) copyright info")
+            } catch {
+                appendToConsole("Error fetching copyright info: \(error.localizedDescription)")
+            }
+        }
     }
     
     private let itemFormatter: DateFormatter = {
