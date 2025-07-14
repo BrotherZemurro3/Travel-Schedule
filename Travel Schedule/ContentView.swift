@@ -15,19 +15,35 @@ struct ContentView: View {
         sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
         animation: .default)
     private var items: FetchedResults<Item>
-
+    @State private var consoleOutput: String = "Console ready. Select an API test from the menu."
+    
     var body: some View {
         NavigationView {
-            
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp!, formatter: itemFormatter)")
-                    } label: {
-                        Text(item.timestamp!, formatter: itemFormatter)
-                    }
+            VStack {
+                // Консольный вывод в верхней части экрана
+                ScrollView {
+                    Text(consoleOutput)
+                        .font(.system(size: 14, design: .monospaced))
+                        .padding()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                        .padding([.horizontal, .top])
                 }
-                .onDelete(perform: deleteItems)
+                .frame(maxHeight: 200)
+                
+                // Список элементов ниже консоли
+                List {
+                    ForEach(items) { item in
+                        NavigationLink {
+                            Text("Item at \(item.timestamp!, formatter: itemFormatter)")
+                        } label: {
+                            Text(item.timestamp!, formatter: itemFormatter)
+                        }
+                    }
+                    .onDelete(perform: deleteItems)
+                }
+                .listStyle(PlainListStyle())
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -39,15 +55,18 @@ struct ContentView: View {
                     }
                 }
                 ToolbarItem(placement: .navigationBarLeading) {
-                      Button("Test API") {
-                          testFetchStations()
-                          testFetchAllStations()
-                      }
-                  }
+                    Menu("Test API") {
+                        Button("Test All Stations") {
+                            testFetchAllStations()
+                        }
+                        Button("Test NearestStations") {
+                            testFetchStations()
+                        }
+                    }
+                }
             }
-            Text("Select an item")
+            .navigationTitle("Travel Schedule")
         }
-
     }
 
     private func addItem() {
@@ -57,14 +76,13 @@ struct ContentView: View {
 
             do {
                 try viewContext.save()
+                appendToConsole("New item added at \(itemFormatter.string(from: Date()))")
             } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 let nsError = error as NSError
+                appendToConsole("Error adding item: \(nsError.localizedDescription)")
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
         }
-        
     }
 
     private func deleteItems(offsets: IndexSet) {
@@ -73,56 +91,55 @@ struct ContentView: View {
 
             do {
                 try viewContext.save()
+                appendToConsole("Deleted \(offsets.count) item(s)")
             } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 let nsError = error as NSError
+                appendToConsole("Error deleting items: \(nsError.localizedDescription)")
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
         }
     }
-}
-func testFetchAllStations() {
-    Task {
-        do {
-            let client = Client(serverURL: try Servers.Server1.url(), transport: URLSessionTransport())
-            
-            let service = GetAllStationsService(client: client, apikey: "94795250-37d7-42dd-aa66-e6c2228ede23")
-            
-            
-            print("Fetching All stations...")
-            let stations = try await service.getAllStations()
-            print("Successfully fetched All stations: \(stations)")
-        } catch {
-            
-            print("Error fetching All stations: \(error)")
-            
-        }
-    }
-}
-func testFetchStations() {
     
-    Task {
-        do {
-            let client = Client(serverURL: try Servers.Server1.url(), transport: URLSessionTransport())
-            
-            let service = NearestStationsService(client: client, apikey: "94795250-37d7-42dd-aa66-e6c2228ede23")
-            
-            
-            print("Fetching station...")
-            let stations = try await service.getNearestStations(lat: 59.864177, // Пример координат
-                                                                lng: 30.319163, // Пример координат
-                                                                distance: 50    // Пример дистанции
-            )
-            print("Successfully fetched stations: \(stations)")
-        } catch {
-            // 5. Если произошла ошибка на любом из этапов (создание клиента, вызов сервиса, обработка ответа),
-            //    она будет поймана здесь, и мы выведем её в консоль
-            print("Error fetching stations: \(error)")
-            // В реальном приложении здесь должна быть логика обработки ошибок (показ алерта и т. д.)
+    private func appendToConsole(_ message: String) {
+        DispatchQueue.main.async {
+            let timestamp = itemFormatter.string(from: Date())
+            consoleOutput += "\n[\(timestamp)] \(message)"
         }
     }
-}
+    
+    private func testFetchAllStations() {
+        appendToConsole("Starting All Stations API test...")
+        Task {
+            do {
+                let client = Client(serverURL: try Servers.Server1.url(), transport: URLSessionTransport())
+                let service = GetAllStationsService(client: client, apikey: "94795250-37d7-42dd-aa66-e6c2228ede23")
+                
+                let stations = try await service.getAllStations()
+                appendToConsole("Successfully fetched \(stations) stations")
+            } catch {
+                appendToConsole("Error fetching All stations: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    private func testFetchStations() {
+        appendToConsole("Starting Nearest Stations API test...")
+        Task {
+            do {
+                let client = Client(serverURL: try Servers.Server1.url(), transport: URLSessionTransport())
+                let service = NearestStationsService(client: client, apikey: "94795250-37d7-42dd-aa66-e6c2228ede23")
+                
+                let stations = try await service.getNearestStations(
+                    lat: 59.864177,
+                    lng: 30.319163,
+                    distance: 50
+                )
+                appendToConsole("Successfully fetched \(stations) nearest stations")
+            } catch {
+                appendToConsole("Error fetching nearest stations: \(error.localizedDescription)")
+            }
+        }
+    }
     
     private let itemFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -130,8 +147,8 @@ func testFetchStations() {
         formatter.timeStyle = .medium
         return formatter
     }()
-    
-    #Preview {
-        ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
-    }
+}
 
+#Preview {
+    ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+}
