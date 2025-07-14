@@ -65,6 +65,9 @@ struct ContentView: View {
                         Button("Test NearestCities"){
                             testFetchNearestCities()
                         }
+                        Button("Test Carrier Info"){
+                            testCarrierInfo()
+                        }
                     }
                 }
             }
@@ -154,6 +157,19 @@ struct ContentView: View {
             } catch {
                 appendToConsole("Error fetching cities: \(error.localizedDescription)")
             }
+        }
+    }
+        private func testCarrierInfo() {
+            appendToConsole("Starting Carrier Info Api test")
+            Task {
+                do {
+                    let client = Client(serverURL: try Servers.Server1.url(), transport: URLSessionTransport())
+                    let service = CarrierInfoService(client: client, apikey: "94795250-37d7-42dd-aa66-e6c2228ede23")
+                    let carrier = try await service.getCarrierInfo(code: "680")
+                    appendToConsole("Successfully fetched \(carrier) carrier info")
+                } catch {
+                    appendToConsole("Error fetching carrier info: \(error.localizedDescription)")
+                }
         }
         
     }
