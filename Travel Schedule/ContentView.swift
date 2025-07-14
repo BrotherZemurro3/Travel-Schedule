@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import CoreData
 import OpenAPIURLSession
 
 struct ContentView: View {
@@ -42,6 +41,7 @@ struct ContentView: View {
                 ToolbarItem(placement: .navigationBarLeading) {
                       Button("Test API") {
                           testFetchStations()
+                          testFetchAllStations()
                       }
                   }
             }
@@ -82,6 +82,24 @@ struct ContentView: View {
         }
     }
 }
+func testFetchAllStations() {
+    Task {
+        do {
+            let client = Client(serverURL: try Servers.Server1.url(), transport: URLSessionTransport())
+            
+            let service = GetAllStationsService(client: client, apikey: "94795250-37d7-42dd-aa66-e6c2228ede23")
+            
+            
+            print("Fetching All stations...")
+            let stations = try await service.getAllStations()
+            print("Successfully fetched All stations: \(stations)")
+        } catch {
+            
+            print("Error fetching All stations: \(error)")
+            
+        }
+    }
+}
 func testFetchStations() {
     
     Task {
@@ -95,25 +113,25 @@ func testFetchStations() {
             let stations = try await service.getNearestStations(lat: 59.864177, // Пример координат
                                                                 lng: 30.319163, // Пример координат
                                                                 distance: 50    // Пример дистанции
-                                                            )
+            )
             print("Successfully fetched stations: \(stations)")
-             } catch {
-                 // 5. Если произошла ошибка на любом из этапов (создание клиента, вызов сервиса, обработка ответа),
-                 //    она будет поймана здесь, и мы выведем её в консоль
-                 print("Error fetching stations: \(error)")
-                 // В реальном приложении здесь должна быть логика обработки ошибок (показ алерта и т. д.)
-             }
-         }
+        } catch {
+            // 5. Если произошла ошибка на любом из этапов (создание клиента, вызов сервиса, обработка ответа),
+            //    она будет поймана здесь, и мы выведем её в консоль
+            print("Error fetching stations: \(error)")
+            // В реальном приложении здесь должна быть логика обработки ошибок (показ алерта и т. д.)
+        }
+    }
 }
+    
+    private let itemFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .short
+        formatter.timeStyle = .medium
+        return formatter
+    }()
+    
+    #Preview {
+        ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+    }
 
-
-private let itemFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .short
-    formatter.timeStyle = .medium
-    return formatter
-}()
-
-#Preview {
-    ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
-}
