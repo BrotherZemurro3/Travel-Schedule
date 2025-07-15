@@ -216,9 +216,9 @@ paths:
   /v3.0/thread/:
     get:
       tags:
-        - getRouteStations
+        - getThread
       summary: Список станций следования
-      operationId: getRouteStations
+      operationId: getThread
       parameters:
         - name: apikey
           in: query
@@ -274,7 +274,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ThreadStationsResponse'
+                $ref: '#/components/schemas/Thread'
 
   /v3.0/nearest_stations/:
     get:

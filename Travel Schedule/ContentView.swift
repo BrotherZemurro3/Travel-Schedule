@@ -71,6 +71,15 @@ struct ContentView: View {
                         Button("Test Copyright Info"){
                             testCopyrightInfo()
                         }
+                        Button("Test RouteStations Info"){
+                            testRouteStations()
+                        }
+                        Button("Test Schedule Info"){
+                            testScheduleInfo()
+                        }
+                        Button("Test SchedualBetweenStations Info"){
+                            testSchedualBetweenStations()
+                        }
                     }
                 }
             }
@@ -112,7 +121,7 @@ struct ContentView: View {
     private func appendToConsole(_ message: String) {
         DispatchQueue.main.async {
             let timestamp = itemFormatter.string(from: Date())
-            consoleOutput += "\n[\(timestamp)] \(message)"
+            consoleOutput = "\n[\(timestamp)] \(message)"
         }
     }
     
@@ -191,13 +200,58 @@ struct ContentView: View {
         }
     }
     
+    private func testRouteStations() {
+        appendToConsole("Starting RouteStations Api test")
+        Task {
+            do {
+                let client = Client(serverURL: try Servers.Server1.url(), transport: URLSessionTransport())
+                let service = RouteStationsService(client: client, apikey: "94795250-37d7-42dd-aa66-e6c2228ede23")
+                let routeStations = try await service.getRouteStations(
+                    uid: "s9600213", format: "json"
+                )
+                appendToConsole("Successfully fetched \(routeStations) routeStations info")
+            } catch {
+                appendToConsole("Error fetching routeStations info: \(error.localizedDescription)")
+            }
+        }
+    }
+    private func testScheduleInfo() {
+        appendToConsole("Starting Schedule Api test")
+        Task {
+            do {
+                let client = Client(serverURL: try Servers.Server1.url(), transport: URLSessionTransport())
+                let service = StationScheduleService(client: client, apikey: "94795250-37d7-42dd-aa66-e6c2228ede23")
+                let schedule = try await service.getStationSchedule(station: "s9620203")
+                appendToConsole("Successfully fetched \(schedule) schedule info")
+            } catch {
+                appendToConsole("Error fetching schedule info: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    private func testSchedualBetweenStations() {
+        appendToConsole("Starting SchedualBetweenStations Api test")
+        Task {
+            do {
+                let client = Client(serverURL: try Servers.Server1.url(), transport: URLSessionTransport())
+                let service = SchedualBetweenStationsService(client: client, apikey: "94795250-37d7-42dd-aa66-e6c2228ede23")
+                let scheduleBetweenStations = try await service.getScheduleBetweenStations(from: "c213", to: "c215", date: "2025-07-15")
+                appendToConsole("Successfully fetched \(scheduleBetweenStations) SchedualBetweenStations info")
+            } catch {
+                appendToConsole("Error fetching SchedualBetweenStations info: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    }
+    
     private let itemFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .short
         formatter.timeStyle = .medium
         return formatter
     }()
-}
+
 
 #Preview {
     ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
