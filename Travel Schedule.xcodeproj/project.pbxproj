@@ -45,6 +45,11 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		3A22E7C32E2FC7A200B741FA /* Views */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Views;
+			sourceTree = "<group>";
+		};
 		3A373D5D2E1FDECE00EE9754 /* Travel Schedule */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -95,6 +100,7 @@
 		3A373D522E1FDECE00EE9754 = {
 			isa = PBXGroup;
 			children = (
+				3A22E7C32E2FC7A200B741FA /* Views */,
 				3A373D5D2E1FDECE00EE9754 /* Travel Schedule */,
 				3A373D752E1FDED100EE9754 /* Travel ScheduleTests */,
 				3A373D7F2E1FDED100EE9754 /* Travel ScheduleUITests */,
@@ -129,6 +135,7 @@
 				3ACEA3BF2E1FF88B00CE8796 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
+				3A22E7C32E2FC7A200B741FA /* Views */,
 				3A373D5D2E1FDECE00EE9754 /* Travel Schedule */,
 			);
 			name = "Travel Schedule";
