@@ -1,25 +1,27 @@
 //
-//  CityCell.swift
+//  RailwayStationRowView.swift
 //  Travel Schedule
 //
 //  Created by Дионисий Коневиченко on 28.07.2025.
 //
 
+import Foundation
 import SwiftUI
 
-struct CityRowView: View {
+struct RailwayStationRowView: View {
     
-    var city: Cities
+    var railwayStation: RailwayStations
     
     var body: some View {
         HStack {
-            Text(city.cityName)
+            Text(railwayStation.RailwayStationName)
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(Color.whiteDay.opacity(0.2))
                 .cornerRadius(8)
             
-            Spacer() // Раздвигает элементы, чтобы кнопка оказалась справа
+            Spacer()
+            
             
             Button(action: { print("Вставить переход позже") }) {
                 Image(systemName: "chevron.forward")
@@ -29,11 +31,8 @@ struct CityRowView: View {
                     .foregroundStyle(.blackUniversal)
                     .padding(6)
             }
-            .frame(maxHeight: .infinity) 
+            .frame(maxHeight: .infinity)
         }
         .padding(.trailing, 8)
     }
-}
-#Preview {
-    CitiesView()
 }
