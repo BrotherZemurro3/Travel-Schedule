@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ScheduleView: View {
     
-    @State private var viewModel = SourceViewModel()
+    @State private var viewModel = StoriesViewModel()
     @State private var from: String = "Откуда"
     @State private var to: String = "Куда"
     @State private var fromToToggle = true
