@@ -19,13 +19,11 @@ struct ContentView: View {
                         Label("", image: selectedTab == 0 ? "ScheduleActive" : "ScheduleInactive")
                     }
                     .tag(0)
-                    .edgesIgnoringSafeArea(.top)
                 SettingsView()
                     .tabItem {
                         Label("", image: selectedTab == 1 ? "SettingsActive" : "SettingsInactive")
                     }
                     .tag(1)
-                    .edgesIgnoringSafeArea(.top)
                 
             }
             .overlay(Rectangle()
