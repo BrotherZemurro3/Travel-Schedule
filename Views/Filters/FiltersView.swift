@@ -30,8 +30,7 @@ struct FiltersView: View {
                         .font(.system(size: 17, weight: .regular))
                         .foregroundStyle(.blackDay)
                     Spacer()
-                    Button(<#LocalizedStringKey#>, action: { print("Вставить координатор")})
-                    Image(systemName: co)
+
                 }
             }
         }
