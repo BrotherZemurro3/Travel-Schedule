@@ -34,6 +34,4 @@ struct CityRowView: View {
         .padding(.trailing, 8)
     }
 }
-#Preview {
-    CitiesView()
-}
+

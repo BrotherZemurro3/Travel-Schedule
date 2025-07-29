@@ -9,31 +9,52 @@ import SwiftUI
 
 struct CitiesView: View {
     @StateObject var viewModel = CitiesViewModel()
+    @Binding var selectedCity: Cities?
+    @Binding var selectedStation: RailwayStations?
     @State private var searchCity = ""
-    
+    let isSelectingFrom: Bool
+    @Binding var navigationPath: NavigationPath
+
     private var filteredCities: [Cities] {
-        searchCity.isEmpty ? viewModel.city : viewModel.city.filter { $0.cityName.lowercased().contains(searchCity.lowercased())}
+        searchCity.isEmpty ? viewModel.city : viewModel.city.filter { $0.cityName.lowercased().contains(searchCity.lowercased()) }
     }
+
     var body: some View {
-        HStack{
-            Text("Выбор города")
-                .font(.system(size: 17, weight: .bold))
-        }
-        VStack{
+        VStack {
+            HStack {
+                Text("Выбор города")
+                    .font(.system(size: 17, weight: .bold))
+            }
             SearchBar(searchText: $searchCity)
             List(filteredCities) { city in
-                CityRowView(city: city)
-                    .listRowInsets(EdgeInsets(top: 4, leading: 9, bottom: 4, trailing: 8))
-                    .listRowSeparator(.hidden)
+                Button(action: {
+                    selectedCity = city
+                    navigationPath.append(ScheduleView.Destination.stations(city: city, isSelectingFrom: isSelectingFrom))
+                }) {
+                    CityRowView(city: city)
+                        .listRowInsets(EdgeInsets(top: 4, leading: 9, bottom: 4, trailing: 8))
+                        .listRowSeparator(.hidden)
+                }
             }
             .listStyle(.plain)
-            
+            .navigationBarBackButtonHidden(true)
+            .navigationBarItems(leading: Button(action: {
+                navigationPath.removeLast()
+            }) {
+                Image(systemName: "chevron.left")
+                    .foregroundStyle(.blue)
+                Text("Назад")
+                    .foregroundStyle(.blue)
+            })
         }
     }
 }
 
-
-
 #Preview {
-    CitiesView()
+    CitiesView(
+        selectedCity: .constant(nil),
+        selectedStation: .constant(nil),
+        isSelectingFrom: true,
+        navigationPath: .constant(NavigationPath())
+    )
 }
