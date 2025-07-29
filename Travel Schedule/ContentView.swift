@@ -11,6 +11,7 @@ import OpenAPIURLSession
 struct ContentView: View {
     @State private var selectedTab = 0
     
+    
     var body: some View {
         ZStack(alignment: .top) {
             TabView(selection: $selectedTab) {
@@ -34,9 +35,6 @@ struct ContentView: View {
             }
         }
     }
-    
-
-
 #Preview {
     ContentView()
 }

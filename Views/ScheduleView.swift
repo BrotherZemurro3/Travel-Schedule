@@ -110,7 +110,9 @@ struct ScheduleView: View {
 
                     if isFindButtonEnabled {
                         Button(action: {
-                            print("Кнопка найти нажата: От: \(fromText), До: \(toText)")
+                            if let fromCity = fromCity, let fromStation = fromStation, let toCity = toCity, let toStatiom = toStation {
+                                navigationPath.append(Destination.carriers(fromCity: fromCity, fromStation: fromStation, toCity: toCity, toStation: toStatiom))
+                            }
                         }) {
                             Text("Найти")
                                 .font(.system(size: 17, weight: .bold))
@@ -130,6 +132,7 @@ struct ScheduleView: View {
                     .frame(height: 3)
             }
             .padding(.top, 24)
+            .toolbar(.visible, for: .tabBar)
             .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: Destination.self) { destination in
                 switch destination {
@@ -146,6 +149,14 @@ struct ScheduleView: View {
                         selectedStation: isSelectingFrom ? $fromStation : $toStation,
                         navigationPath: $navigationPath
                     )
+                case .carriers(let fromCity, let fromStation, let toCity, let toStation):
+                    CarriersListView(
+                        fromCity: fromCity,
+                        fromStation: fromStation,
+                        toCity: toCity,
+                        toStation: toStation,
+                        navigationPath: $navigationPath
+                    )
                 }
             }
         }
@@ -154,6 +165,7 @@ struct ScheduleView: View {
     enum Destination: Hashable {
         case cities(isSelectingFrom: Bool)
         case stations(city: Cities, isSelectingFrom: Bool)
+        case carriers(fromCity: Cities, fromStation: RailwayStations, toCity: Cities, toStation: RailwayStations)
     }
 }
 

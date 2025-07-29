@@ -8,28 +8,46 @@
 import SwiftUI
 
 struct CarriersListView: View {
-    
-    @State var viewModel = CarrierRouteViewModel()
-    @State private var fromCity: Cities?
-    @State private var fromStation: RailwayStations?
-    @State private var toCity: Cities?
-    @State private var toStation: RailwayStations?
+    @StateObject var viewModel = CarrierRouteViewModel()
+    let fromCity: Cities
+    let fromStation: RailwayStations
+    let toCity: Cities
+    let toStation: RailwayStations
+    @Binding var navigationPath: NavigationPath
 
     var body: some View {
         VStack {
-            Text("\(fromCity) (\(fromStation)) → \(toCity)(\(toStation)")
+            Text("\(fromCity.cityName) (\(fromStation.RailwayStationName)) → \(toCity.cityName) (\(toStation.RailwayStationName))")
                 .font(.system(size: 24, weight: .bold))
+                .foregroundStyle(.blackDay)
+                .padding()
             List(viewModel.routes) { route in
                 CarriersRowView(route: route)
                     .listRowInsets(EdgeInsets(top: 4, leading: 9, bottom: 4, trailing: 8))
-                    
+                    .listRowBackground(Color.clear)
             }
-            .foregroundStyle(.whiteDay)
+            .listStyle(.plain)
+            .background(Color.clear)
         }
-        .foregroundStyle(.whiteDay)
+        
+        .navigationBarBackButtonHidden(true)
+        .navigationBarItems(leading: Button(action: {
+            navigationPath.removeLast()
+        }) {
+            Image(systemName: "chevron.left")
+                .foregroundStyle(.blackDay)
+
+        })
+        .toolbar(.hidden, for: .tabBar)
     }
 }
 
 #Preview {
-    CarriersListView()
+    CarriersListView(
+        fromCity: Cities(cityName: "Москва"),
+        fromStation: RailwayStations(RailwayStationName: "Киевский вокзал"),
+        toCity: Cities(cityName: "Санкт-Петербург"),
+        toStation: RailwayStations(RailwayStationName: "Московский вокзал"),
+        navigationPath: .constant(NavigationPath())
+    )
 }

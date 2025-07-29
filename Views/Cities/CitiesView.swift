@@ -37,15 +37,15 @@ struct CitiesView: View {
                 }
             }
             .listStyle(.plain)
+            .toolbar(.hidden, for: .tabBar)
             .navigationBarBackButtonHidden(true)
             .navigationBarItems(leading: Button(action: {
                 navigationPath.removeLast()
             }) {
                 Image(systemName: "chevron.left")
-                    .foregroundStyle(.blue)
-                Text("Назад")
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(.blackDay)
             })
+            .toolbar(.hidden, for: .tabBar)
         }
     }
 }
