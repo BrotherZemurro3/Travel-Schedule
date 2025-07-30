@@ -17,7 +17,7 @@ struct RailwayStationRowView: View {
             Text(railwayStation.RailwayStationName)
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color.whiteDay.opacity(0.2))
+                .background(Color(.systemBackground).opacity(0.2))
                 .cornerRadius(8)
             
             Spacer()

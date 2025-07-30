@@ -16,8 +16,9 @@ struct CityRowView: View {
             Text(city.cityName)
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color.whiteDay.opacity(0.2))
+                .background(Color(.systemBackground).opacity(0.2))
                 .cornerRadius(8)
+            
             
             Spacer()
             
@@ -29,8 +30,10 @@ struct CityRowView: View {
                     .foregroundStyle(.blackUniversal)
                     .padding(6)
             }
-            .frame(maxHeight: .infinity) 
+            .frame(maxHeight: .infinity)
+            
         }
+        
         .padding(.trailing, 8)
     }
 }

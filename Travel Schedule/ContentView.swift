@@ -28,6 +28,7 @@ struct ContentView: View {
                     .tag(1)
                 
             }
+            
             .overlay(Rectangle()
                 .frame(height: 1)
                 .foregroundStyle(.gray.opacity(0.3))
@@ -35,6 +36,7 @@ struct ContentView: View {
                      alignment: .bottom)
             }
         }
+    
     }
 #Preview {
     ContentView()

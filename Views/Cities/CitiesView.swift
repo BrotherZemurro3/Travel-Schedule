@@ -24,6 +24,7 @@ struct CitiesView: View {
             HStack {
                 Text("Выбор города")
                     .font(.system(size: 17, weight: .bold))
+                
             }
             SearchBar(searchText: $searchCity)
             List(filteredCities) { city in
@@ -32,11 +33,12 @@ struct CitiesView: View {
                     navigationPath.append(ScheduleView.Destination.stations(city: city, isSelectingFrom: isSelectingFrom))
                 }) {
                     CityRowView(city: city)
-                        .listRowInsets(EdgeInsets(top: 4, leading: 9, bottom: 4, trailing: 8))
+                        .listRowInsets(EdgeInsets(top: 4, leading: 9, bottom: 4, trailing: 4))
                         .listRowSeparator(.hidden)
                 }
             }
             .listStyle(.plain)
+            .listRowSeparator(.hidden)
             .toolbar(.hidden, for: .tabBar)
             .navigationBarBackButtonHidden(true)
             .navigationBarItems(leading: Button(action: {
@@ -45,6 +47,7 @@ struct CitiesView: View {
                 Image(systemName: "chevron.left")
                     .foregroundStyle(.blackDay)
             })
+            .toolbar(.hidden, for: .tabBar)
         }
     }
 }

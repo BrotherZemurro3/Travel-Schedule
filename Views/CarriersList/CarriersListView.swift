@@ -59,6 +59,13 @@ struct CarriersListView: View {
                     Text("Уточнить время")
                         .font(.system(size: 17, weight: .bold))
                         .foregroundStyle(.white)
+                    if !viewModel.selectedPeriods.isEmpty || viewModel.showWithTransfer != nil {
+                                                Circle()
+                            .fill(.redUniversal)
+                                                    .frame(width: 8, height: 8)
+                                                    .padding(.leading, -4)
+                                            }
+                                        }
                         .frame(width: 343, height: 35)
                         .padding(.vertical, 12)
                         .background(Color(UIColor(resource: .blueUniversal)))
@@ -69,7 +76,7 @@ struct CarriersListView: View {
             }
         }
     }
-}
+
 
 #Preview {
     CarriersListView(
