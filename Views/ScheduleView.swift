@@ -14,6 +14,7 @@ struct ScheduleView: View {
     @State private var toCity: Cities?
     @State private var toStation: RailwayStations?
     @State private var navigationPath = NavigationPath()
+    @StateObject private var carrierViewModel = CarrierRouteViewModel()
 
     private var fromText: String {
         if let city = fromCity, let station = fromStation {
@@ -110,8 +111,8 @@ struct ScheduleView: View {
 
                     if isFindButtonEnabled {
                         Button(action: {
-                            if let fromCity = fromCity, let fromStation = fromStation, let toCity = toCity, let toStatiom = toStation {
-                                navigationPath.append(Destination.carriers(fromCity: fromCity, fromStation: fromStation, toCity: toCity, toStation: toStatiom))
+                            if let fromCity = fromCity, let fromStation = fromStation, let toCity = toCity, let toStation = toStation {
+                                navigationPath.append(Destination.carriers(fromCity: fromCity, fromStation: fromStation, toCity: toCity, toStation: toStation))
                             }
                         }) {
                             Text("Найти")
@@ -132,8 +133,8 @@ struct ScheduleView: View {
                     .frame(height: 3)
             }
             .padding(.top, 24)
-            .toolbar(.visible, for: .tabBar)
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar(.visible, for: .tabBar)
             .navigationDestination(for: Destination.self) { destination in
                 switch destination {
                 case .cities(let isSelectingFrom):
@@ -143,20 +144,34 @@ struct ScheduleView: View {
                         isSelectingFrom: isSelectingFrom,
                         navigationPath: $navigationPath
                     )
+                    .toolbar(.hidden, for: .tabBar)
                 case .stations(let city, let isSelectingFrom):
                     RailwayStationsView(
                         selectedCity: city,
                         selectedStation: isSelectingFrom ? $fromStation : $toStation,
                         navigationPath: $navigationPath
                     )
+                    .toolbar(.hidden, for: .tabBar)
                 case .carriers(let fromCity, let fromStation, let toCity, let toStation):
                     CarriersListView(
+                        viewModel: carrierViewModel,
                         fromCity: fromCity,
                         fromStation: fromStation,
                         toCity: toCity,
                         toStation: toStation,
                         navigationPath: $navigationPath
                     )
+                    .toolbar(.hidden, for: .tabBar)
+                case .filters(let fromCity, let fromStation, let toCity, let toStation):
+                    FiltersView(
+                        viewModel: carrierViewModel,
+                        fromCity: fromCity,
+                        fromStation: fromStation,
+                        toCity: toCity,
+                        toStation: toStation,
+                        navigationPath: $navigationPath
+                    )
+                    .toolbar(.hidden, for: .tabBar)
                 }
             }
         }
@@ -166,6 +181,7 @@ struct ScheduleView: View {
         case cities(isSelectingFrom: Bool)
         case stations(city: Cities, isSelectingFrom: Bool)
         case carriers(fromCity: Cities, fromStation: RailwayStations, toCity: Cities, toStation: RailwayStations)
+        case filters(fromCity: Cities, fromStation: RailwayStations, toCity: Cities, toStation: RailwayStations)
     }
 }
 

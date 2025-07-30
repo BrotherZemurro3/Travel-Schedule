@@ -19,7 +19,7 @@ enum PeriodofTime: String, CaseIterable, Hashable {
 struct FiltersView: View {
     
     @ObservedObject var viewModel: CarrierRouteViewModel
-    let fromCity: String
+    let fromCity: Cities
     let fromStation: RailwayStations
     let toCity: Cities
     let toStation: RailwayStations
@@ -53,6 +53,7 @@ struct FiltersView: View {
                     }
                 }
                 .padding(.horizontal, 16)
+                .padding(.top, 16)
             }
             Text("Показывать варианты с пересадками")
                 .font(.system(size: 24, weight: .bold))
@@ -75,7 +76,24 @@ struct FiltersView: View {
                 }
             }
             .padding(.horizontal, 16)
-            
+            .padding(.top, 16)
+            HStack {
+                           Text("Нет")
+                               .font(.system(size: 17, weight: .regular))
+                               .foregroundStyle(.blackDay)
+                           Spacer()
+                           Button(action: {
+                               showWithTransfer = false
+                               viewModel.showWithTransfer = false
+                               print("Show with transfer: false")
+                           }) {
+                               Image(systemName: showWithTransfer == false ? "circle.fill" : "circle")
+                                   .foregroundStyle(.blackDay)
+                                   .font(.system(size: 20))
+                           }
+                       }
+                       .padding(.horizontal, 16)
+                       .padding(.top, 16)
             Spacer()
             
             Button(action: {
@@ -84,12 +102,12 @@ struct FiltersView: View {
                 Text("Применить фильтры")
                     .font(.system(size: 17, weight: .bold))
                     .foregroundStyle(.whiteUniversal)
-                    .frame(width: 343, height: 60)
+                    .frame(width: 343, height: 35)
                     .padding(.vertical, 12)
                     .background(.blueUniversal)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 36)
             .padding(.bottom, 16)
         }
         .navigationBarBackButtonHidden(true)
