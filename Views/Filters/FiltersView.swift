@@ -18,12 +18,23 @@ enum PeriodofTime: String, CaseIterable, Hashable {
 
 struct FiltersView: View {
     
+    @ObservedObject var view: CarrierRouteViewModel
+    let fromCity: String
+    let fromStation: RailwayStations
+    let toCity: Cities
+    let toStation: RailwayStations
+    @Binding var navigationPath: NavigationPath
+    @State private var showWithTransfer: Bool?
+    
+    
     var body: some View {
         
         VStack(alignment: .leading, spacing: 16) {
             Text("Время отправления")
                 .font(.system(size: 24, weight: .bold))
                 .foregroundStyle(.blackDay)
+                .padding(.horizontal, 16)
+            
             ForEach(PeriodofTime.allCases, id: \.self) { period in
                 HStack {
                     Text(period.rawValue)
