@@ -47,7 +47,6 @@ struct RailwayStationsView: View {
                     .foregroundStyle(.blackDay)
 
             })
-            .toolbar(.hidden, for: .tabBar)
         }
     }
 }

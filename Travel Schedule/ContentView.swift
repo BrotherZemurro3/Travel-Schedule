@@ -18,6 +18,7 @@ struct ContentView: View {
                 ScheduleView()
                     .tabItem {
                         Label("", image: selectedTab == 0 ? "ScheduleActive" : "ScheduleInactive")
+                        
                     }
                     .tag(0)
                 SettingsView()

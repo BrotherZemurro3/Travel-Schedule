@@ -45,7 +45,6 @@ struct CitiesView: View {
                 Image(systemName: "chevron.left")
                     .foregroundStyle(.blackDay)
             })
-            .toolbar(.hidden, for: .tabBar)
         }
     }
 }

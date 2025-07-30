@@ -175,6 +175,7 @@ struct ScheduleView: View {
                 }
             }
         }
+        
     }
 
     enum Destination: Hashable {
