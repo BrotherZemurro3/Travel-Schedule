@@ -9,33 +9,41 @@ import SwiftUI
 
 struct SearchBar: View {
     @Binding var searchText: String
-    
+    @Environment(\.colorScheme) var colorScheme
     var body: some View {
-        HStack(spacing: -4) {
+        HStack(spacing: 0) {
             Image(systemName: "magnifyingglass")
-                .foregroundStyle(.gray)
-                .padding(.leading, 24)
-            
-            
+                .foregroundColor(.grayUniversal)
+                .padding(.leading, 8)
             TextField("Введите запрос", text: $searchText)
                 .padding(8)
-                .backgroundStyle(.grayUniversal)
-                .cornerRadius(10)
-                .padding(.horizontal, 8)
+                .padding(.trailing, 8)
+                .foregroundColor(.blackDay)
                 .overlay(
                     HStack {
                         Spacer()
                         if !searchText.isEmpty {
-                            Button(action: {
-                                searchText = ""
-                            }) {
+                            Button(action: { searchText = "" }) {
                                 Image(systemName: "xmark.circle.fill")
-                                    .foregroundColor(.gray)
+                                    .foregroundColor(.grayUniversal)
                             }
-                            .padding(.trailing, 8)
+                            .padding(.trailing, 16)
                         }
                     }
                 )
         }
+        .background(colorScheme == .dark ? .fillsTertiaryDark : .lightGray)
+        .cornerRadius(10)
+        .padding(.horizontal, 16)
     }
+}
+
+#Preview {
+    struct SearchBarPreview: View {
+        @State private var searchText = ""
+        var body: some View {
+            SearchBar(searchText: $searchText)
+        }
+    }
+    return SearchBarPreview()
 }
