@@ -28,7 +28,7 @@ struct RailwayStationRowView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 10.91, height: 18.82)
-                    .foregroundStyle(.blackUniversal)
+                    .foregroundStyle(.blackDay)
                     .padding(6)
             }
             .frame(maxHeight: .infinity)

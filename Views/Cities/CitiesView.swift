@@ -21,21 +21,40 @@ struct CitiesView: View {
     
     var body: some View {
         VStack {
-            HStack {
+            ZStack {
+                HStack {
+                    Button(action: {
+                        navigationPath.removeLast()
+                    }) {
+                        Image(systemName: "chevron.left")
+                            .frame(width: 17, height: 22)
+                            .foregroundStyle(.blackDay)
+                    }
+                    Spacer()
+                }
                 Text("Выбор города")
                     .font(.system(size: 17, weight: .bold))
+                    .frame(maxWidth: .infinity, alignment: .center)
             }
+            .padding(.horizontal)
+            .padding(.top, 8)
+            
             SearchBar(searchText: $searchCity)
                 .padding(.bottom, 16)
-            ScrollView{
+            
+            ScrollView {
                 if filteredCities.isEmpty {
                     VStack {
                         Spacer()
                         Text("Город не найден")
                             .font(.system(size: 24, weight: .bold))
                             .foregroundStyle(.blackDay)
-                            .frame(width: 194, height: 29)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.top, 238)
+                        Spacer()
                     }
+                    .frame(maxHeight: .infinity)
+                    .padding(.bottom, 200)
                 } else {
                     LazyVStack {
                         ForEach(filteredCities) { city in
@@ -51,18 +70,11 @@ struct CitiesView: View {
                         }
                         .listStyle(.plain)
                         .listRowSeparator(.hidden)
-                        .toolbar(.hidden, for: .tabBar)
-                        .navigationBarBackButtonHidden(true)
-                        .navigationBarItems(leading: Button(action: {
-                            navigationPath.removeLast()
-                        }) {
-                            Image(systemName: "chevron.left")
-                                .foregroundStyle(.blackDay)
-                        })
-                        .toolbar(.hidden, for: .tabBar)
                     }
                 }
             }
+            .toolbar(.hidden, for: .tabBar)
+            .navigationBarBackButtonHidden(true)
         }
     }
 }

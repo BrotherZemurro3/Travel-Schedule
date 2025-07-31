@@ -13,44 +13,71 @@ struct RailwayStationsView: View {
     let selectedCity: Cities
     @Binding var selectedStation: RailwayStations?
     @Binding var navigationPath: NavigationPath
-
+    
     private var filteredRailwayStations: [RailwayStations] {
         searchStation.isEmpty ? viewModel.railwayStation : viewModel.railwayStation.filter {
             $0.RailwayStationName.lowercased().contains(searchStation.lowercased())
         }
     }
-
+    
     var body: some View {
         VStack {
-            HStack {
+            ZStack {
+                HStack {
+                    Button(action: {
+                        navigationPath.removeLast()
+                    }) {
+                        Image(systemName: "chevron.left")
+                            .frame(width: 17, height: 22)
+                            .foregroundStyle(.blackDay)
+                    }
+                    Spacer()
+                }
                 Text("Выбор станции")
                     .font(.system(size: 17, weight: .bold))
+                    .frame(maxWidth: .infinity, alignment: .center)
             }
+            .padding(.horizontal)
+            .padding(.top, 8)
+            
             SearchBar(searchText: $searchStation)
-            List(filteredRailwayStations) { station in
-                Button(action: {
-                    selectedStation = station
-                    navigationPath.removeLast(navigationPath.count) // Clear navigation stack to return to ScheduleView
-                }) {
-                    RailwayStationRowView(railwayStation: station)
-                        .listRowInsets(EdgeInsets(top: 4, leading: 9, bottom: 4, trailing: 8))
-                        .listRowSeparator(.hidden)
+                .padding(.bottom, 16)
+            
+            ScrollView {
+                if filteredRailwayStations.isEmpty {
+                    VStack {
+                        Spacer()
+                        Text("Станция не найдена")
+                            .font(.system(size: 24, weight: .bold))
+                            .foregroundStyle(.blackDay)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.top, 238)
+                        Spacer()
+                    }
+                    .frame(maxHeight: .infinity)
+                    .padding(.bottom, 200)
+                } else {
+                    LazyVStack{
+                        ForEach(filteredRailwayStations) { station in
+                            Button(action: {
+                                selectedStation = station
+                                navigationPath.removeLast(navigationPath.count)
+                            }) {
+                                RailwayStationRowView(railwayStation: station)
+                                    .listRowInsets(EdgeInsets(top: 4, leading: 9, bottom: 4, trailing: 8))
+                                    .foregroundStyle(.blackDay)
+                                    .listRowSeparator(.hidden)
+                            }
+                        }
+                        .listStyle(.plain)
+                    }
                 }
             }
-            .listStyle(.plain)
             .toolbar(.hidden, for: .tabBar)
             .navigationBarBackButtonHidden(true)
-            .navigationBarItems(leading: Button(action: {
-                navigationPath.removeLast()
-            }) {
-                Image(systemName: "chevron.left")
-                    .foregroundStyle(.blackDay)
-
-            })
         }
     }
 }
-
 #Preview {
     RailwayStationsView(
         selectedCity: Cities(cityName: "Москва"),
