@@ -14,40 +14,55 @@ struct CitiesView: View {
     @State private var searchCity = ""
     let isSelectingFrom: Bool
     @Binding var navigationPath: NavigationPath
-
+    
     private var filteredCities: [Cities] {
         searchCity.isEmpty ? viewModel.city : viewModel.city.filter { $0.cityName.lowercased().contains(searchCity.lowercased()) }
     }
-
+    
     var body: some View {
         VStack {
             HStack {
                 Text("Выбор города")
                     .font(.system(size: 17, weight: .bold))
-                
             }
             SearchBar(searchText: $searchCity)
-            List(filteredCities) { city in
-                Button(action: {
-                    selectedCity = city
-                    navigationPath.append(ScheduleView.Destination.stations(city: city, isSelectingFrom: isSelectingFrom))
-                }) {
-                    CityRowView(city: city)
-                        .listRowInsets(EdgeInsets(top: 4, leading: 9, bottom: 4, trailing: 4))
+                .padding(.bottom, 16)
+            ScrollView{
+                if filteredCities.isEmpty {
+                    VStack {
+                        Spacer()
+                        Text("Город не найден")
+                            .font(.system(size: 24, weight: .bold))
+                            .foregroundStyle(.blackDay)
+                            .frame(width: 194, height: 29)
+                    }
+                } else {
+                    LazyVStack {
+                        ForEach(filteredCities) { city in
+                            Button(action: {
+                                selectedCity = city
+                                navigationPath.append(ScheduleView.Destination.stations(city: city, isSelectingFrom: isSelectingFrom))
+                            }) {
+                                CityRowView(city: city)
+                                    .listRowInsets(EdgeInsets(top: 4, leading: 9, bottom: 4, trailing: 4))
+                                    .foregroundStyle(.blackDay)
+                                    .listRowSeparator(.hidden)
+                            }
+                        }
+                        .listStyle(.plain)
                         .listRowSeparator(.hidden)
+                        .toolbar(.hidden, for: .tabBar)
+                        .navigationBarBackButtonHidden(true)
+                        .navigationBarItems(leading: Button(action: {
+                            navigationPath.removeLast()
+                        }) {
+                            Image(systemName: "chevron.left")
+                                .foregroundStyle(.blackDay)
+                        })
+                        .toolbar(.hidden, for: .tabBar)
+                    }
                 }
             }
-            .listStyle(.plain)
-            .listRowSeparator(.hidden)
-            .toolbar(.hidden, for: .tabBar)
-            .navigationBarBackButtonHidden(true)
-            .navigationBarItems(leading: Button(action: {
-                navigationPath.removeLast()
-            }) {
-                Image(systemName: "chevron.left")
-                    .foregroundStyle(.blackDay)
-            })
-            .toolbar(.hidden, for: .tabBar)
         }
     }
 }

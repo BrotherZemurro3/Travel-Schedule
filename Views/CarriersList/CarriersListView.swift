@@ -23,10 +23,13 @@ struct CarriersListView: View {
                     .foregroundStyle(.blackDay)
                     .padding()
                 if viewModel.filteredRoutes.isEmpty {
+                    Spacer()
                     Text("Вариантов нет")
                         .font(.system(size: 24, weight: .bold))
                         .foregroundStyle(.blackDay)
-                        .frame(width: 171, height: 29)
+                        .frame(width: 191, height: 29)
+                        .padding(.bottom, 150)
+                    Spacer()
                 } else {
                     List(viewModel.filteredRoutes) { route in
                         CarriersRowView(route: route)
