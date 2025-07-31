@@ -96,7 +96,7 @@ struct ScheduleView: View {
                                 Image("ChangeButton")
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(width: 36, height: 36)
+                                    .frame(width: 34, height: 34)
                                     .foregroundStyle(.blue)
                                     .padding(6)
                                     .background(.white)
