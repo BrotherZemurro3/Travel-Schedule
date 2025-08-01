@@ -60,7 +60,7 @@ struct CitiesView: View {
                         ForEach(filteredCities) { city in
                             Button(action: {
                                 selectedCity = city
-                                navigationPath.append(ScheduleView.Destination.stations(city: city, isSelectingFrom: isSelectingFrom))
+                                navigationPath.append(ContentView.Destination.stations(city: city, isSelectingFrom: isSelectingFrom))
                             }) {
                                 CityRowView(city: city)
                                     .listRowInsets(EdgeInsets(top: 4, leading: 9, bottom: 4, trailing: 4))

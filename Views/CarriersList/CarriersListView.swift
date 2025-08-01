@@ -21,7 +21,7 @@ struct CarriersListView: View {
                 Text("\(fromCity.cityName) (\(fromStation.RailwayStationName)) → \(toCity.cityName) (\(toStation.RailwayStationName))")
                     .font(.system(size: 24, weight: .bold))
                     .foregroundStyle(.blackDay)
-                    .padding()
+                    .padding(.leading, -1)
                 if viewModel.filteredRoutes.isEmpty {
                     Spacer()
                     Text("Вариантов нет")
@@ -52,7 +52,7 @@ struct CarriersListView: View {
             VStack {
                 Spacer()
                 Button(action: {
-                    navigationPath.append(ScheduleView.Destination.filters(
+                    navigationPath.append(ContentView.Destination.filters(
                         fromCity: fromCity,
                         fromStation: fromStation,
                         toCity: toCity,
