@@ -28,7 +28,7 @@ struct RailwayStationsView: View {
                         navigationPath.removeLast()
                     }) {
                         Image(systemName: "chevron.left")
-                            .frame(width: 17, height: 22)
+                            .frame(width: 17, height: 26)
                             .foregroundStyle(.blackDay)
                     }
                     Spacer()
