@@ -6,81 +6,97 @@
 //
 
 import SwiftUI
-import CoreData
+import OpenAPIURLSession
 
 struct ContentView: View {
-    @Environment(\.managedObjectContext) private var viewContext
-
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
-        animation: .default)
-    private var items: FetchedResults<Item>
+    @State private var selectedTab = 0
+    @State private var navigationPath = NavigationPath()
+    @State private var fromCity: Cities?
+    @State private var fromStation: RailwayStations?
+    @State private var toCity: Cities?
+    @State private var toStation: RailwayStations?
+    @StateObject private var carrierViewModel = CarrierRouteViewModel()
 
     var body: some View {
-        NavigationView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp!, formatter: itemFormatter)")
-                    } label: {
-                        Text(item.timestamp!, formatter: itemFormatter)
+        NavigationStack(path: $navigationPath) {
+            ZStack(alignment: .top) {
+                TabView(selection: $selectedTab) {
+                    ScheduleView(
+                        fromCity: $fromCity,
+                        fromStation: $fromStation,
+                        toCity: $toCity,
+                        toStation: $toStation,
+                        navigationPath: $navigationPath,
+                        carrierViewModel: carrierViewModel
+                    )
+                    .tabItem {
+                        Label("", image: selectedTab == 0 ? "ScheduleActive" : "ScheduleInactive")
                     }
+                    .tag(0)
+                    SettingsView()
+                        .tabItem {
+                            Label("", image: selectedTab == 1 ? "SettingsActive" : "SettingsInactive")
+                        }
+                        .tag(1)
                 }
-                .onDelete(perform: deleteItems)
+                .overlay(
+                    Rectangle()
+                        .frame(height: 1)
+                        .foregroundStyle(.gray.opacity(0.3))
+                        .offset(y: -49),
+                    alignment: .bottom
+                )
             }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
+            .navigationDestination(for: Destination.self) { destination in
+                switch destination {
+                case .cities(let isSelectingFrom):
+                    CitiesView(
+                        selectedCity: isSelectingFrom ? $fromCity : $toCity,
+                        selectedStation: isSelectingFrom ? $fromStation : $toStation,
+                        isSelectingFrom: isSelectingFrom,
+                        navigationPath: $navigationPath
+                    )
+                    .toolbar(.hidden, for: .tabBar)
+                case .stations(let city, let isSelectingFrom):
+                    RailwayStationsView(
+                        selectedCity: city,
+                        selectedStation: isSelectingFrom ? $fromStation : $toStation,
+                        navigationPath: $navigationPath
+                    )
+                    .toolbar(.hidden, for: .tabBar)
+                case .carriers(let fromCity, let fromStation, let toCity, let toStation):
+                    CarriersListView(
+                        viewModel: carrierViewModel,
+                        fromCity: fromCity,
+                        fromStation: fromStation,
+                        toCity: toCity,
+                        toStation: toStation,
+                        navigationPath: $navigationPath
+                    )
+                    .toolbar(.hidden, for: .tabBar)
+                case .filters(let fromCity, let fromStation, let toCity, let toStation):
+                    FiltersView(
+                        viewModel: carrierViewModel,
+                        fromCity: fromCity,
+                        fromStation: fromStation,
+                        toCity: toCity,
+                        toStation: toStation,
+                        navigationPath: $navigationPath
+                    )
+                    .toolbar(.hidden, for: .tabBar)
                 }
             }
-            Text("Select an item")
         }
     }
 
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
-
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            offsets.map { items[$0] }.forEach(viewContext.delete)
-
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
-        }
+    enum Destination: Hashable {
+        case cities(isSelectingFrom: Bool)
+        case stations(city: Cities, isSelectingFrom: Bool)
+        case carriers(fromCity: Cities, fromStation: RailwayStations, toCity: Cities, toStation: RailwayStations)
+        case filters(fromCity: Cities, fromStation: RailwayStations, toCity: Cities, toStation: RailwayStations)
     }
 }
 
-private let itemFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .short
-    formatter.timeStyle = .medium
-    return formatter
-}()
-
 #Preview {
-    ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+    ContentView()
 }
