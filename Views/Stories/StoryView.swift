@@ -37,6 +37,20 @@ struct StoryView: View {
             }
             .padding(.init(top: 0, leading: 16, bottom: 40, trailing: 16))
             
+            // ProgressBar
+            
+            VStack {
+                HStack(spacing: 4) {
+                    ForEach(0..<viewModel.story[viewModel.currentImageIndex].images.count, id: \.self) { index in
+                        ProgressBar(numberOfSections: 1, progress: index == viewModel.currentImageIndex ? viewModel.progress : (index < viewModel.currentImageIndex ? 1 : 0))
+                            .frame(height: 6)
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 16)
+                
+                Spacer()
+            }
             
         }
         
