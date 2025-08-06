@@ -18,8 +18,9 @@ struct StoryView: View {
             Color.blackUniversal.edgesIgnoringSafeArea(.all)
             Image(viewModel.story[viewModel.currentStoryIndex].images[viewModel.currentImageIndex])
                 .resizable()
-                .scaledToFit()
+                .scaledToFill()
                 .cornerRadius(40)
+        
             
             VStack(alignment: .leading, spacing: 10) {
                 Spacer()
@@ -47,11 +48,57 @@ struct StoryView: View {
                     }
                 }
                 .padding(.horizontal, 16)
-                .padding(.top, 16)
+                .padding(.top, 35)
                 
                 Spacer()
             }
-            
+            // Close button
+            VStack {
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        viewModel.stopTimer()
+                        viewModel.showStoryView = false
+                        dismiss()
+                    }) {
+                        Image("CloseButton")
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                    }
+                    .padding(.top, 57)
+                    .padding(.trailing, 16)
+                }
+                Spacer()
+            }
+            // Navigation areas
+            HStack {
+                Rectangle()
+                    .fill(Color.clear)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                    viewModel.navigateBackward()
+                }
+                Rectangle()
+                    .fill(Color.clear)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        viewModel.navigateForward()
+                    }
+                
+            }
+            .gesture(DragGesture()
+                .onEnded { value in
+                    if value.translation.height > 100 {
+                        dismiss()
+                    }
+                }
+            )
+            .onAppear() {
+                viewModel.startTimer()
+            }
+            .onDisappear {
+                viewModel.stopTimer()
+            }
         }
         
         }
