@@ -16,9 +16,9 @@ class StoriesViewModel: ObservableObject {
     @Published var currentImageIndex: Int = 0
     @Published var progress: CGFloat = 0.0
     
-    private var timer: Timer.TimerPublisher = Timer.publish(every: 0.1, on: .main, in: .common)
+    private var timer: Timer.TimerPublisher = Timer.publish(every: 0.05, on: .main, in: .common)
     private var cancellable: AnyCancellable?
-    private let imageDuration: TimeInterval = 5.0 // Each image lasts 5 seconds
+    private let imageDuration: TimeInterval = 10.0 
     
     init() {
         self.story = [
@@ -36,25 +36,31 @@ class StoriesViewModel: ObservableObject {
     
     func startTimer() {
         stopTimer()
-        timer = Timer.publish(every: 0.1, on: .main, in: .common)
+        timer = Timer.publish(every: 0.05, on: .main, in: .common)
         cancellable = timer
             .autoconnect()
             .sink { [weak self] _ in
                 guard let self = self else { return }
-                self.progress += 0.1 / self.imageDuration
-                if self.progress >= 1.0 {
-                    self.navigateForward()
+                withAnimation(.linear(duration: 0.05)) {
+                    self.progress += 0.05 / self.imageDuration
+                    if self.progress >= 1.0 {
+                        self.navigateForward()
+                    }
                 }
             }
     }
     
     func stopTimer() {
         cancellable?.cancel()
-        progress = 0.0
+        withAnimation(.linear) {
+            progress = 0.0
+        }
     }
     
     func navigateForward() {
-        progress = 0.0
+        withAnimation(.linear) {
+            progress = 0.0
+        }
         if currentImageIndex < story[currentStoryIndex].images.count - 1 {
             currentImageIndex += 1
         } else if currentStoryIndex < story.count - 1 {
@@ -67,7 +73,9 @@ class StoriesViewModel: ObservableObject {
     }
     
     func navigateBackward() {
-        progress = 0.0
+        withAnimation(.linear) {
+            progress = 0.0
+        }
         if currentImageIndex > 0 {
             currentImageIndex -= 1
         } else if currentStoryIndex > 0 {
@@ -79,7 +87,9 @@ class StoriesViewModel: ObservableObject {
     func selectStory(at index: Int) {
         currentStoryIndex = index
         currentImageIndex = 0
-        progress = 0.0
+        withAnimation(.linear) {
+            progress = 0.0
+        }
         showStoryView = true
     }
 }
