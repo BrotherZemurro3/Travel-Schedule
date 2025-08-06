@@ -8,11 +8,10 @@
 import SwiftUI
 
 struct StoriesCell: View {
-    // Высота ячеек 140, ширина 92, радиус 16, бордер 4
-    // Высота Коллекции такая же, ширина 404
     var stories: Stories
     let imageHeight: Double = 140
     let imageWidth: Double = 92
+    @EnvironmentObject var viewModel: StoriesViewModel
     var body: some View {
         VStack(alignment: .leading) {
             Image(stories.previewImage)
@@ -20,14 +19,20 @@ struct StoriesCell: View {
                 .cornerRadius(16)
                 .frame(width: imageWidth, height: imageHeight)
                 .overlay(
-                                    RoundedRectangle(cornerRadius: 16)
-                                        .stroke(Color.blue, lineWidth: 4)
-                                )
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(Color.blue, lineWidth: 4)
+                )
         }
         .padding(.horizontal, 4)
+        .onTapGesture {
+            if let index = viewModel.story.firstIndex(where: { $0.id == stories.id }) {
+                viewModel.selectStory(at: index)
+            }
+        }
     }
 }
 
 #Preview {
-    StoriesCell(stories: Stories(previewImage: "ConductorGirlPreview", BigImage: "ConductorGirlBig"))
+    StoriesCell(stories: Stories(previewImage: "ConductorGirlPreview", images: ["ConductorGirlBig", "ConductorGirlTwoBig"]))
+        .environmentObject(StoriesViewModel())
 }
