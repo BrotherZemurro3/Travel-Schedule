@@ -42,7 +42,7 @@ struct ContentView: View {
                 .overlay(
                     Rectangle()
                         .frame(height: 1)
-                        .foregroundStyle(.gray.opacity(0.3))
+                        .foregroundStyle(.black.opacity(0.3))
                         .offset(y: -49),
                     alignment: .bottom
                 )

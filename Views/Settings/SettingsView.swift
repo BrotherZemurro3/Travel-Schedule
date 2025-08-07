@@ -56,10 +56,40 @@ struct SettingsView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                         .padding(.horizontal, 16)
                 }
-                
-                
+                HStack{
+                        Text("Пользовательское соглашение")
+                            .font(.system(size: 17, weight: .regular))
+                            .foregroundStyle(.blackDay)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(Color.whiteDay.opacity(0.1))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .padding(.horizontal, 16)
+                    
+                    Button(action: {
+                         navigationPath.append(SettingsDestination.agreement)
+                    }) { Image(systemName: "chevron.forward")
+                            .foregroundStyle(.blackDay)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .frame(width: 24, height: 24)
+                }
                 Spacer()
-            }
+                VStack(alignment: .center, spacing: 16){
+                    Text("Приложение использует API «Яндекс.Расписания»")
+                        .font(.system(size: 12, weight: .regular))
+                        .foregroundStyle(.blackDay)
+                        .lineLimit(1)
+                       
+                    Text("Версия 1.0 (beta)")
+                        .font(.system(size: 12, weight: .regular))
+                        .foregroundStyle(.blackDay)
+                        .lineLimit(1)
+                }
+                .frame(width: 343, height: 44)
+                .padding(.horizontal, 30)
+                }
             .toolbar(.visible, for: .tabBar)
             .preferredColorScheme(selectedTheme == .auto ? nil : (selectedTheme == .dark ? .dark : .light))
             .onAppear {
@@ -83,6 +113,9 @@ struct SettingsView: View {
                         NoInternetView(navigationPath: $navigationPath)
                     case .serverError:
                         ServerErrorView(navigationPath: $navigationPath)
+                    case .agreement:
+                        AgreementView(navigationPath: $navigationPath)
+
                     }
                 }
             }
@@ -91,6 +124,7 @@ struct SettingsView: View {
 enum SettingsDestination: Hashable {
      case noInternet
      case serverError
+    case agreement
  }
 }
 #Preview {
