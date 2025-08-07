@@ -107,10 +107,19 @@ struct StoryView: View {
             .gesture(
                 DragGesture()
                     .onEnded { value in
+                        // Вертикальный свайп для закрытия
                         if value.translation.height > 100 {
                             viewModel.stopTimer()
                             viewModel.showStoryView = false
                             dismiss()
+                        }
+                        // Горизонтальный свайп влево — вперёд
+                        else if value.translation.width < -50 {
+                            viewModel.navigateForward()
+                        }
+                        // Горизонтальный свайп вправо — назад
+                        else if value.translation.width > 50 {
+                            viewModel.navigateBackward()
                         }
                     }
             )
