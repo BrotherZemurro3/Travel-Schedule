@@ -15,6 +15,8 @@ class StoriesViewModel: ObservableObject {
     @Published var currentStoryIndex: Int = 0
     @Published var currentImageIndex: Int = 0
     @Published var progress: CGFloat = 0.0
+    @Published var viewedStories: Set<UUID> = []
+    
     
     private var timer: Timer.TimerPublisher = Timer.publish(every: 0.05, on: .main, in: .common)
     private var cancellable: AnyCancellable?
@@ -63,10 +65,14 @@ class StoriesViewModel: ObservableObject {
         }
         if currentImageIndex < story[currentStoryIndex].images.count - 1 {
             currentImageIndex += 1
+            viewedStories.insert(story[currentStoryIndex].id)
         } else if currentStoryIndex < story.count - 1 {
+            viewedStories.insert(story[currentStoryIndex].id)
             currentStoryIndex += 1
             currentImageIndex = 0
+            viewedStories.insert(story[currentStoryIndex].id)
         } else {
+            viewedStories.insert(story[currentStoryIndex].id)
             currentStoryIndex = 0
             currentImageIndex = 0
             stopTimer()
@@ -80,9 +86,11 @@ class StoriesViewModel: ObservableObject {
         }
         if currentImageIndex > 0 {
             currentImageIndex -= 1
+            viewedStories.insert(story[currentStoryIndex].id)
         } else if currentStoryIndex > 0 {
             currentStoryIndex -= 1
             currentImageIndex = story[currentStoryIndex].images.count - 1
+            viewedStories.insert(story[currentStoryIndex].id)
         } else {
             currentStoryIndex = 0
             currentImageIndex = 0
@@ -97,6 +105,11 @@ class StoriesViewModel: ObservableObject {
         withAnimation(.linear) {
             progress = 0.0
         }
+        viewedStories.insert(story[currentStoryIndex].id)
         showStoryView = true
+    }
+    
+    func isStoryViewed(_ story: Stories) -> Bool {
+        return viewedStories.contains(story.id)
     }
 }

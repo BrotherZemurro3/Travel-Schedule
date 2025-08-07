@@ -20,11 +20,15 @@ struct StoriesCell: View {
                     .resizable()
                     .cornerRadius(16)
                     .frame(width: imageWidth, height: imageHeight)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(Color.blue, lineWidth: 4)
-                    )
-                
+                    .opacity(viewModel.isStoryViewed(stories) ? 0.5 : 1.0) // Затемнение для просмотренных
+                     .overlay(
+                         viewModel.isStoryViewed(stories) ?
+                             RoundedRectangle(cornerRadius: 16)
+                                 .stroke(Color.gray, lineWidth: 0) // Серая обводка для просмотренных
+                             :
+                             RoundedRectangle(cornerRadius: 16)
+                                 .stroke(Color.blue, lineWidth: 4) // Синяя обводка для непросмотренных
+                     )
             }
             VStack {
                 Text("Text Text Text Text Text Text Text")
