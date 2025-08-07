@@ -114,6 +114,11 @@ struct StoryView: View {
                         }
                     }
             )
+            .onChange(of: viewModel.showStoryView) { _, newValue in
+                if !newValue {
+                    dismiss()
+                }
+            }
             .onAppear {
                 viewModel.startTimer()
             }

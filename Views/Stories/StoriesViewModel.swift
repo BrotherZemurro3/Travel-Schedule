@@ -69,6 +69,8 @@ class StoriesViewModel: ObservableObject {
         } else {
             currentStoryIndex = 0
             currentImageIndex = 0
+            stopTimer()
+            showStoryView = false
         }
     }
     
@@ -81,6 +83,11 @@ class StoriesViewModel: ObservableObject {
         } else if currentStoryIndex > 0 {
             currentStoryIndex -= 1
             currentImageIndex = story[currentStoryIndex].images.count - 1
+        } else {
+            currentStoryIndex = 0
+            currentImageIndex = 0
+            stopTimer()
+            showStoryView = false
         }
     }
     
