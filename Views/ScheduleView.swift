@@ -136,10 +136,8 @@ struct ScheduleView: View {
             .padding(.top, 24)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.visible, for: .tabBar)
-            if viewModel.showStoryView {
+            .fullScreenCover(isPresented: $viewModel.showStoryView) {
                 StoryView(viewModel: viewModel)
-                    .ignoresSafeArea()
-                    .transition(.opacity)
             }
         }
     }

@@ -30,7 +30,7 @@ class StoriesViewModel: ObservableObject {
             Stories(previewImage: "MachineWorkerPreview", images: ["MachineWorkerBig", "stationWorkerBig"]),
             Stories(previewImage: "GrannyWithVegetablesPreview", images: ["GrannyWithVegetablesBig", "pumpkinTrainBig"]),
             Stories(previewImage: "FreeSpacePreview", images: ["FreeSpaceBig", "ambientBig"]),
-            Stories(previewImage: "ConductorGirlPreview", images: ["ConductorGirlBig", "ConductorGirlTwoBig"])
+            Stories(previewImage: "ConductorGirlPreview", images: ["conductorGirlBig", "ConductorGirlTwoBig"])
         ]
     }
     
