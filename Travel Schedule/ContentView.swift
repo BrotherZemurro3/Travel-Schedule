@@ -82,7 +82,10 @@ struct ContentView: View {
                         toCity: toCity,
                         toStation: toStation,
                         navigationPath: $navigationPath
-                    )
+                        )
+                case .carrierDetail(let route):
+                    CarrierDetailView(route: route, navigationPath: $navigationPath)
+                    
                     .toolbar(.hidden, for: .tabBar)
                 }
             }
@@ -94,6 +97,7 @@ struct ContentView: View {
         case stations(city: Cities, isSelectingFrom: Bool)
         case carriers(fromCity: Cities, fromStation: RailwayStations, toCity: Cities, toStation: RailwayStations)
         case filters(fromCity: Cities, fromStation: RailwayStations, toCity: Cities, toStation: RailwayStations)
+        case carrierDetail(route: CarrierRoute)
     }
 }
 

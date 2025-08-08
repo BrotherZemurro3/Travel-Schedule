@@ -32,9 +32,14 @@ struct CarriersListView: View {
                     Spacer()
                 } else {
                     List(viewModel.filteredRoutes) { route in
-                        CarriersRowView(route: route)
-                            .listRowInsets(EdgeInsets(top: 4, leading: 9, bottom: 4, trailing: 8))
-                            .listRowBackground(Color.clear)
+                        Button(action: {
+                            navigationPath.append(ContentView.Destination.carrierDetail(route: route))
+                        }) {
+                            CarriersRowView(route: route)
+                                .listRowInsets(EdgeInsets(top: 4, leading: 9, bottom: 4, trailing: 8))
+                                .listRowBackground(Color.clear)
+                        }
+                        .buttonStyle(PlainButtonStyle())
                     }
                     .listStyle(.plain)
                     .background(Color.clear)
