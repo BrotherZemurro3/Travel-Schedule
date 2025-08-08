@@ -28,8 +28,27 @@ struct SettingsView: View {
                 .padding(.vertical, 8)
                 .background(Color.whiteDay.opacity(0.1))
                 .clipShape(RoundedRectangle(cornerRadius: 12))
-                .padding(.horizontal, 16)
-                
+             
+                HStack{
+                        Text("Пользовательское соглашение")
+                            .font(.system(size: 17, weight: .regular))
+                            .foregroundStyle(.blackDay)
+                    
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                   
+                    Spacer()
+                    Button(action: {
+                         navigationPath.append(SettingsDestination.agreement)
+                    }) { Image(systemName: "chevron.forward")
+                            .foregroundStyle(.blackDay)
+                    }
+                    
+                    .padding(.horizontal, -17)
+                    .padding(.vertical, 8)
+                    .frame(width: 34, height: 34)
+                    
+                }
                 
                 Button(action: {
                     navigationPath.append(SettingsDestination.noInternet)
@@ -41,7 +60,7 @@ struct SettingsView: View {
                         .padding(.vertical, 8)
                         .background(Color.whiteDay.opacity(0.1))
                         .clipShape(RoundedRectangle(cornerRadius: 12))
-                        .padding(.horizontal, 16)
+                        
                 }
                 
                 Button(action: {
@@ -54,27 +73,9 @@ struct SettingsView: View {
                         .padding(.vertical, 8)
                         .background(Color.whiteDay.opacity(0.1))
                         .clipShape(RoundedRectangle(cornerRadius: 12))
-                        .padding(.horizontal, 16)
+                        
                 }
-                HStack{
-                        Text("Пользовательское соглашение")
-                            .font(.system(size: 17, weight: .regular))
-                            .foregroundStyle(.blackDay)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(Color.whiteDay.opacity(0.1))
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                            .padding(.horizontal, 16)
-                    
-                    Button(action: {
-                         navigationPath.append(SettingsDestination.agreement)
-                    }) { Image(systemName: "chevron.forward")
-                            .foregroundStyle(.blackDay)
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .frame(width: 24, height: 24)
-                }
+
                 Spacer()
                 VStack(alignment: .center, spacing: 16){
                     Text("Приложение использует API «Яндекс.Расписания»")
