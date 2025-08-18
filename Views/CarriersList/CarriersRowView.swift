@@ -59,6 +59,3 @@ struct CarriersRowView: View {
             .clipShape(RoundedRectangle(cornerRadius: 24))
         }
     }
-#Preview {
-    CarriersRowView(route:  CarrierRoute(carrierName: "РЖД", date: "17 января", departureTime: "22:30", arrivalTime: "08:15", duration: "20 часов", withTransfer: true, carrierImage: "RJDmock", note: "С пересадкой в Костроме"))
-}
