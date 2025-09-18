@@ -14,10 +14,10 @@ struct RailwayStations: Identifiable, Hashable {
     var RailwayStationName: String
 }
 
-
-class RailwayStationViewModel: ObservableObject {
+@Observable
+class RailwayStationViewModel {
     
-    @Published var railwayStation: [RailwayStations]
+  var railwayStation: [RailwayStations]
     
     init() {
         self.railwayStation = [
