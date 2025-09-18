@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CitiesView: View {
-    @StateObject var viewModel = CitiesViewModel()
+    @State var viewModel = CitiesViewModel()
     @Binding var selectedCity: Cities?
     @Binding var selectedStation: RailwayStations?
     @State private var searchCity = ""

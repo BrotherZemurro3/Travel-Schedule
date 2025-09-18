@@ -10,10 +10,10 @@ struct Cities: Identifiable, Hashable {
     var cityName: String
 }
 
-
-class CitiesViewModel: ObservableObject {
+@Observable
+class CitiesViewModel {
     
-    @Published var city: [Cities]
+    var city: [Cities]
     
     
     init()  {
