@@ -1,9 +1,4 @@
-//
-//  StoriesViewModel.swift
-//  Travel Schedule
-//
-//  Created by Дионисий Коневиченко on 22.07.2025.
-//
+
 
 import Foundation
 import SwiftUI
@@ -20,7 +15,7 @@ class StoriesViewModel {
     
     private var timer: Timer.TimerPublisher = Timer.publish(every: 0.05, on: .main, in: .common)
     private var cancellable: AnyCancellable?
-    private let imageDuration: TimeInterval = 10.0 
+    private let imageDuration: TimeInterval = 10.0
     
     init() {
         self.story = [

@@ -1,9 +1,4 @@
-//
-//  ContentView.swift
-//  Travel Schedule
-//
-//  Created by Дионисий Коневиченко on 10.07.2025.
-//
+
 
 import SwiftUI
 import OpenAPIURLSession
@@ -28,6 +23,7 @@ struct ContentView: View {
                     
                     SettingsView()
                         .environment(settingsViewModel)
+                        .environment(travelViewModel)
                         .tabItem {
                             Label("", image: travelViewModel.selectedTab == 1 ? "SettingsActive" : "SettingsInactive")
                         }
@@ -80,6 +76,18 @@ struct ContentView: View {
                 case .carrierDetail(let route):
                     CarrierDetailView(route: route, navigationPath: $travelViewModel.navigationPath)
                         .toolbar(.hidden, for: .tabBar)
+                case .settings(let destination):
+                    switch destination {
+                    case .noInternet:
+                        NoInternetView(navigationPath: $travelViewModel.navigationPath)
+                            .toolbar(.hidden, for: .tabBar)
+                    case .serverError:
+                        ServerErrorView(navigationPath: $travelViewModel.navigationPath)
+                            .toolbar(.hidden, for: .tabBar)
+                    case .agreement:
+                        AgreementView(navigationPath: $travelViewModel.navigationPath)
+                            .toolbar(.hidden, for: .tabBar)
+                    }
                 }
             }
         }
@@ -92,6 +100,7 @@ struct ContentView: View {
         case carriers(fromCity: Cities, fromStation: RailwayStations, toCity: Cities, toStation: RailwayStations)
         case filters(fromCity: Cities, fromStation: RailwayStations, toCity: Cities, toStation: RailwayStations)
         case carrierDetail(route: CarrierRoute)
+        case settings(destination: SettingsDestination)
     }
 }
 

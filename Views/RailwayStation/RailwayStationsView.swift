@@ -1,9 +1,4 @@
-//
-//  RailwayStationsView.swift
-//  Travel Schedule
-//
-//  Created by Дионисий Коневиченко on 28.07.2025.
-//
+
 
 import SwiftUI
 
@@ -13,12 +8,6 @@ struct RailwayStationsView: View {
     let selectedCity: Cities
     @Binding var selectedStation: RailwayStations?
     @Binding var navigationPath: NavigationPath
-    
-    private var filteredRailwayStations: [RailwayStations] {
-        searchStation.isEmpty ? viewModel.railwayStation : viewModel.railwayStation.filter {
-            $0.RailwayStationName.lowercased().contains(searchStation.lowercased())
-        }
-    }
     
     var body: some View {
         VStack {
@@ -42,46 +31,72 @@ struct RailwayStationsView: View {
             
             SearchBar(searchText: $searchStation)
                 .padding(.bottom, 16)
+                .onChange(of: searchStation) { _, newValue in
+                    viewModel.searchStations(query: newValue)
+                }
             
-            ScrollView {
-                if filteredRailwayStations.isEmpty {
-                    VStack {
-                        Spacer()
-                        Text("Станция не найдена")
-                            .font(.system(size: 24, weight: .bold))
-                            .foregroundStyle(.blackDay)
-                            .frame(maxWidth: .infinity, alignment: .center)
-                            .padding(.top, 238)
-                        Spacer()
-                    }
-                    .frame(maxHeight: .infinity)
-                    .padding(.bottom, 200)
-                } else {
-                    LazyVStack{
-                        ForEach(filteredRailwayStations) { station in
-                            Button(action: {
-                                selectedStation = station
-                                navigationPath.removeLast(navigationPath.count)
-                            }) {
-                                RailwayStationRowView(railwayStation: station)
-                                    .listRowInsets(EdgeInsets(top: 4, leading: 9, bottom: 4, trailing: 8))
-                                    .foregroundStyle(.blackDay)
-                                    .listRowSeparator(.hidden)
+            // Показываем индикатор загрузки
+            if viewModel.isLoading {
+                ProgressView("Загрузка станций...")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding()
+            } else if let errorMessage = viewModel.errorMessage {
+                VStack {
+                    Text("Ошибка")
+                        .font(.headline)
+                    Text(errorMessage)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding()
+            } else {
+                ScrollView {
+                    if viewModel.filteredStations.isEmpty {
+                        VStack {
+                            Spacer()
+                            Text("Станция не найдена")
+                                .font(.system(size: 24, weight: .bold))
+                                .foregroundStyle(.blackDay)
+                                .frame(maxWidth: .infinity, alignment: .center)
+                                .padding(.top, 238)
+                            Spacer()
+                        }
+                        .frame(maxHeight: .infinity)
+                        .padding(.bottom, 200)
+                    } else {
+                        LazyVStack{
+                            ForEach(viewModel.filteredStations) { station in
+                                Button(action: {
+                                    selectedStation = station
+                                    navigationPath.removeLast(navigationPath.count)
+                                }) {
+                                    RailwayStationRowView(railwayStation: station)
+                                        .listRowInsets(EdgeInsets(top: 4, leading: 9, bottom: 4, trailing: 8))
+                                        .foregroundStyle(.blackDay)
+                                        .listRowSeparator(.hidden)
+                                }
                             }
                         }
-                        .listStyle(.plain)
                     }
                 }
             }
-            .toolbar(.hidden, for: .tabBar)
-            .navigationBarBackButtonHidden(true)
         }
+        .task {
+            // Загружаем станции для выбранного города
+            await viewModel.loadStationsForCity(selectedCity)
+        }
+        .toolbar(.hidden, for: .tabBar)
+        .navigationBarBackButtonHidden(true)
     }
 }
+
 #Preview {
-    RailwayStationsView(
-        selectedCity: Cities(cityName: "Москва"),
-        selectedStation: .constant(nil),
-        navigationPath: .constant(NavigationPath())
-    )
+        RailwayStationsView(
+            selectedCity: Cities(cityName: "Москва"),
+            selectedStation: .constant(nil),
+            navigationPath: .constant(NavigationPath())
+        )
 }
+

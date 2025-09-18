@@ -1,9 +1,4 @@
-//
-//  CarriersViewModel.swift
-//  Travel Schedule
-//
-//  Created by Дионисий Коневиченко on 14.07.2025.
-//
+
 
 import Foundation
 import SwiftUI
@@ -35,7 +30,7 @@ class CarriersViewModel {
     
     // MARK: - Computed Properties
     
-    /// Отфильтрованные перевозчики по поисковому запросу
+
     var filteredCarriers: [Carrier] {
         if searchText.isEmpty {
             return carriers

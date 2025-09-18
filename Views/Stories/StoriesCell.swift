@@ -1,9 +1,4 @@
-//
-//  StoriesCell.swift
-//  Travel Schedule
-//
-//  Created by Дионисий Коневиченко on 22.07.2025.
-//
+
 
 import SwiftUI
 

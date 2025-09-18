@@ -1,20 +1,16 @@
-//
-//  SettingsView.swift
-//  Travel Schedule
-//
-//  Created by Дионисий Коневиченко on 22.07.2025.
-//
+
 
 import SwiftUI
 
 struct SettingsView: View {
     @Environment(SettingsViewModel.self) private var settingsViewModel
+    @Environment(TravelViewModel.self) private var travelViewModel
     @Environment(\.colorScheme) private var colorScheme
 
 
     var body: some View {
         @Bindable var settingsViewModel = settingsViewModel
-        NavigationStack(path: $settingsViewModel.navigationPath) {
+        @Bindable var travelViewModel = travelViewModel
             VStack(alignment: .leading, spacing: 16) {
                 HStack {
                     Text("Тёмная тема")
@@ -39,7 +35,7 @@ struct SettingsView: View {
                    
                     Spacer()
                     Button(action: {
-                        settingsViewModel.navigationPath.append(SettingsDestination.agreement)
+                        travelViewModel.navigationPath.append(ContentView.Destination.settings(destination: .agreement))
                     }) { Image(systemName: "chevron.forward")
                             .foregroundStyle(.blackDay)
                     }
@@ -51,7 +47,7 @@ struct SettingsView: View {
                 }
                 
                 Button(action: {
-                    settingsViewModel.navigationPath.append(SettingsDestination.noInternet)
+                    travelViewModel.navigationPath.append(ContentView.Destination.settings(destination: .noInternet))
                 }) {
                     Text("Показать экран 'Нет интернета'")
                         .font(.system(size: 17, weight: .regular))
@@ -64,7 +60,7 @@ struct SettingsView: View {
                 }
                 
                 Button(action: {
-                    settingsViewModel.navigationPath.append(SettingsDestination.serverError)
+                    travelViewModel.navigationPath.append(ContentView.Destination.settings(destination: .serverError))
                 }) {
                     Text("Показать экран 'Ошибка сервера'")
                         .font(.system(size: 17, weight: .regular))
@@ -77,6 +73,9 @@ struct SettingsView: View {
                 }
 
                 Spacer()
+                
+                Spacer().frame(height: 20)
+                
                 VStack(alignment: .center, spacing: 16){
                     Text("Приложение использует API «Яндекс.Расписания»")
                         .font(.system(size: 12, weight: .regular))
@@ -103,25 +102,7 @@ struct SettingsView: View {
             .onChange(of: colorScheme) { newValue in
                 settingsViewModel.updateToggleForSystemTheme(newValue)
             }
-            .navigationDestination(for: SettingsDestination.self) { destination in
-                Group {
-                    switch destination {
-                    case .noInternet:
-                        NoInternetView(navigationPath: $settingsViewModel.navigationPath)
-                    case .serverError:
-                        ServerErrorView(navigationPath: $settingsViewModel.navigationPath)
-                    case .agreement:
-                        AgreementView(navigationPath: $settingsViewModel.navigationPath)
-
-                    }                }
-            }
-        }
     }
-enum SettingsDestination: Hashable {
-     case noInternet
-     case serverError
-    case agreement
- }
 }
 #Preview {
     SettingsView()

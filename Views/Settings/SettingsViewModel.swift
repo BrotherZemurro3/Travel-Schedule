@@ -1,10 +1,11 @@
 
-
 import Foundation
 import SwiftUI
 import Observation
 
+
 @Observable
+@MainActor
 class SettingsViewModel {
     
     
@@ -12,7 +13,6 @@ class SettingsViewModel {
     var selectedTheme: Theme = .auto
     var isDarkMode: Bool = false
     
-    var navigationPath = NavigationPath()
     private let themeKey = "selectedTheme"
     
     init() {
@@ -57,13 +57,13 @@ class SettingsViewModel {
             isDarkMode = systemColorScheme == .dark
         }
     }
-
+    
     
 }
 
 // MARK: - Navigation Destinations
 
-/// Направления навигации в настройках
+
 enum SettingsDestination: Hashable {
     case noInternet
     case serverError

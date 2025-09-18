@@ -1,9 +1,3 @@
-//
-//  AgreementView.swift
-//  Travel Schedule
-//
-//  Created by Дионисий Коневиченко on 07.08.2025.
-//
 
 import SwiftUI
 import WebKit
