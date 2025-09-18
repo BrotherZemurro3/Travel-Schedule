@@ -8,13 +8,14 @@
 import SwiftUI
 
 struct CarriersListView: View {
-    @Environment(CarrierRouteViewModel.self) private var viewModel
+    @State private var carriersViewModel = CarriersViewModel()
+    @Environment(CarrierRouteViewModel.self) private var routeViewModel
     let fromCity: Cities
     let fromStation: RailwayStations
     let toCity: Cities
     let toStation: RailwayStations
     @Binding var navigationPath: NavigationPath
-
+    
     var body: some View {
         ZStack {
             VStack {
@@ -22,27 +23,46 @@ struct CarriersListView: View {
                     .font(.system(size: 24, weight: .bold))
                     .foregroundStyle(.blackDay)
                     .padding(.leading, -1)
-                if viewModel.filteredRoutes.isEmpty {
+                if routeViewModel.isLoading {
+                    ProgressView("Загрузка расписания...")
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .padding()
+                } else if let errorMessage = routeViewModel.errorMessage {
+                    VStack {
+                        Text("Ошибка")
+                            .font(.headline)
+                        Text(errorMessage)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding()
+                } else if routeViewModel.filteredRoutes.isEmpty {
                     Spacer()
-                    Text("Вариантов нет")
+                    Text("Маршруты не найдены")
                         .font(.system(size: 24, weight: .bold))
                         .foregroundStyle(.blackDay)
                         .frame(width: 191, height: 29)
                         .padding(.bottom, 150)
                     Spacer()
                 } else {
-                    List(viewModel.filteredRoutes) { route in
-                        Button(action: {
-                            navigationPath.append(ContentView.Destination.carrierDetail(route: route))
-                        }) {
-                            CarriersRowView(route: route)
-                                .listRowInsets(EdgeInsets(top: 4, leading: 9, bottom: 4, trailing: 8))
-                                .listRowBackground(Color.clear)
+                    ScrollView {
+                        LazyVStack(spacing: 12) {
+                            ForEach(routeViewModel.filteredRoutes) { route in
+                                Button(action: {
+                                    // Навигация к экрану детальной информации о перевозчике
+                                    print("Выбран маршрут: \(route.carrierName) в \(route.departureTime)")
+                                    navigationPath.append(ContentView.Destination.carrierDetail(route: route))
+                                }) {
+                                    CarriersRowView(route: route)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                            }
                         }
-                        .buttonStyle(PlainButtonStyle())
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 80) // Отступ для кнопки "Уточнить время"
                     }
-                    .listStyle(.plain)
-                    .background(Color.clear)
                 }
             }
             .navigationBarBackButtonHidden(true)
@@ -53,7 +73,7 @@ struct CarriersListView: View {
                     .foregroundStyle(.blackDay)
             })
             .toolbar(.hidden, for: .tabBar)
-
+            
             VStack {
                 Spacer()
                 Button(action: {
@@ -67,24 +87,45 @@ struct CarriersListView: View {
                     Text("Уточнить время")
                         .font(.system(size: 17, weight: .bold))
                         .foregroundStyle(.white)
-                    if !viewModel.selectedPeriods.isEmpty || viewModel.showWithTransfer != nil {
-                                                Circle()
+                    if !routeViewModel.selectedPeriods.isEmpty || routeViewModel.showWithTransfer != nil {
+                        Circle()
                             .fill(.redUniversal)
-                                                    .frame(width: 8, height: 8)
-                                                    .padding(.leading, -4)
-                                            }
-                                        }
-                        .frame(width: 343, height: 35)
-                        .padding(.vertical, 12)
-                        .background(Color(UIColor(resource: .blueUniversal)))
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                            .frame(width: 8, height: 8)
+                            .padding(.leading, -4)
+                    }
                 }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 16)
+                .frame(width: 343, height: 35)
+                .padding(.vertical, 12)
+                .background(Color(UIColor(resource: .blueUniversal)))
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+            }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 16)
+        }
+        
+        .task {
+            // Загружаем расписание между станциями
+            print("🚉 Загрузка расписания:")
+            print("   От: \(fromCity.cityName) - \(fromStation.RailwayStationName)")
+            print("   Код станции отправления: \(fromStation.stationCode ?? "НЕТ КОДА")")
+            print("   До: \(toCity.cityName) - \(toStation.RailwayStationName)")
+            print("   Код станции прибытия: \(toStation.stationCode ?? "НЕТ КОДА")")
+            
+            let fromCode = fromStation.stationCode ?? ""
+            let toCode = toStation.stationCode ?? ""
+            
+            if fromCode.isEmpty || toCode.isEmpty {
+                print("❌ Отсутствуют коды станций - используем моковые данные")
+                await routeViewModel.loadMockRoutes()
+            } else {
+                await routeViewModel.loadSchedule(
+                    fromStation: fromCode,
+                    toStation: toCode
+                )
             }
         }
     }
-
+}
 
 #Preview {
     CarriersListView(
@@ -94,5 +135,5 @@ struct CarriersListView: View {
         toStation: RailwayStations(RailwayStationName: "Московский вокзал"),
         navigationPath: .constant(NavigationPath())
     )
-    .environment(CarrierRouteViewModel())
+    // .environment(CarrierRouteViewModel())
 }
