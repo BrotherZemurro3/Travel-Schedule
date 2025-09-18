@@ -8,44 +8,19 @@
 import SwiftUI
 
 struct ScheduleView: View {
-    @StateObject private var viewModel = StoriesViewModel()
-    @Binding var fromCity: Cities?
-    @Binding var fromStation: RailwayStations?
-    @Binding var toCity: Cities?
-    @Binding var toStation: RailwayStations?
-    @Binding var navigationPath: NavigationPath
-    @ObservedObject var carrierViewModel: CarrierRouteViewModel
+    @Environment(TravelViewModel.self) private var travelViewModel
+    @Environment(CarrierRouteViewModel.self) private var carrierViewModel
     
-    private var fromText: String {
-        if let city = fromCity, let station = fromStation {
-            return "\(city.cityName) (\(station.RailwayStationName))"
-        } else if let city = fromCity {
-            return city.cityName
-        }
-        return "Откуда"
-    }
-    
-    private var toText: String {
-        if let city = toCity, let station = toStation {
-            return "\(city.cityName) (\(station.RailwayStationName))"
-        } else if let city = toCity {
-            return city.cityName
-        }
-        return "Куда"
-    }
-    
-    private var isFindButtonEnabled: Bool {
-        return fromStation != nil && toStation != nil
-    }
+    @State private var storiesViewModel = StoriesViewModel()
     
     var body: some View {
         ZStack {
             VStack(spacing: 44) {
                 ScrollView(.horizontal) {
                     LazyHStack(alignment: .center, spacing: 12) {
-                        ForEach(viewModel.story) { story in
+                        ForEach(storiesViewModel.story) { story in
                             StoriesCell(stories: story)
-                                .environmentObject(viewModel)
+                                .environment(storiesViewModel)
                         }
                     }
                 }
@@ -61,20 +36,20 @@ struct ScheduleView: View {
                         HStack {
                             VStack(alignment: .leading, spacing: 0) {
                                 Button(action: {
-                                    navigationPath.append(ContentView.Destination.cities(isSelectingFrom: true))
+                                    travelViewModel.navigationPath.append(ContentView.Destination.cities(isSelectingFrom: true))
                                 }) {
-                                    Text(fromText)
-                                        .foregroundStyle(fromCity == nil ? .grayUniversal : .blackUniversal)
+                                    Text(travelViewModel.fromText)
+                                        .foregroundStyle(travelViewModel.fromCity == nil ? .grayUniversal : .blackUniversal)
                                         .padding(.vertical, 14)
                                         .padding(.horizontal, 16)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                 }
                                 
                                 Button(action: {
-                                    navigationPath.append(ContentView.Destination.cities(isSelectingFrom: false))
+                                    travelViewModel.navigationPath.append(ContentView.Destination.cities(isSelectingFrom: false))
                                 }) {
-                                    Text(toText)
-                                        .foregroundStyle(toCity == nil ? .grayUniversal : .blackUniversal)
+                                    Text(travelViewModel.toText)
+                                        .foregroundStyle(travelViewModel.toCity == nil ? .grayUniversal : .blackUniversal)
                                         .padding(.vertical, 14)
                                         .padding(.horizontal, 16)
                                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -87,12 +62,7 @@ struct ScheduleView: View {
                             .padding(.horizontal, 16)
                             
                             Button(action: {
-                                let tempCity = fromCity
-                                let tempStation = fromStation
-                                fromCity = toCity
-                                fromStation = toStation
-                                toCity = tempCity
-                                toStation = tempStation
+                                travelViewModel.swapCities()
                             }) {
                                 Image("ChangeButton")
                                     .resizable()
@@ -110,10 +80,18 @@ struct ScheduleView: View {
                     .frame(height: 128)
                     .padding(.horizontal, 16)
                     
-                    if isFindButtonEnabled {
+                    if travelViewModel.canSearch {
                         Button(action: {
-                            if let fromCity = fromCity, let fromStation = fromStation, let toCity = toCity, let toStation = toStation {
-                                navigationPath.append(ContentView.Destination.carriers(fromCity: fromCity, fromStation: fromStation, toCity: toCity, toStation: toStation))
+                            if let fromCity = travelViewModel.fromCity,
+                               let fromStation = travelViewModel.fromStation,
+                               let toCity = travelViewModel.toCity,
+                               let toStation = travelViewModel.toStation {
+                                travelViewModel.navigationPath.append(ContentView.Destination.carriers(
+                                    fromCity: fromCity,
+                                    fromStation: fromStation,
+                                    toCity: toCity,
+                                    toStation: toStation
+                                ))
                             }
                         }) {
                             Text("Найти")
@@ -136,19 +114,14 @@ struct ScheduleView: View {
             .padding(.top, 24)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.visible, for: .tabBar)
-            .fullScreenCover(isPresented: $viewModel.showStoryView) {
-                StoryView(viewModel: viewModel)
+            .fullScreenCover(isPresented: $storiesViewModel.showStoryView) {
+                StoryView(viewModel: storiesViewModel)
             }
         }
     }
 }
 #Preview {
-    ScheduleView(
-        fromCity: .constant(nil),
-        fromStation: .constant(nil),
-        toCity: .constant(nil),
-        toStation: .constant(nil),
-        navigationPath: .constant(NavigationPath()),
-        carrierViewModel: CarrierRouteViewModel()
-    )
+    ScheduleView()
+        .environment(TravelViewModel())
+        .environment(CarrierRouteViewModel())
 }

@@ -9,33 +9,27 @@ import SwiftUI
 import OpenAPIURLSession
 
 struct ContentView: View {
-    @State private var selectedTab = 0
-    @State private var navigationPath = NavigationPath()
-    @State private var fromCity: Cities?
-    @State private var fromStation: RailwayStations?
-    @State private var toCity: Cities?
-    @State private var toStation: RailwayStations?
-    @StateObject private var carrierViewModel = CarrierRouteViewModel()
+    // MARK: - ViewModels
+    @State private var travelViewModel = TravelViewModel()
+    @State private var settingsViewModel = SettingsViewModel()
+    @State private var carrierViewModel = CarrierRouteViewModel()
 
     var body: some View {
-        NavigationStack(path: $navigationPath) {
+        NavigationStack(path: $travelViewModel.navigationPath) {
             ZStack(alignment: .top) {
-                TabView(selection: $selectedTab) {
-                    ScheduleView(
-                        fromCity: $fromCity,
-                        fromStation: $fromStation,
-                        toCity: $toCity,
-                        toStation: $toStation,
-                        navigationPath: $navigationPath,
-                        carrierViewModel: carrierViewModel
-                    )
-                    .tabItem {
-                        Label("", image: selectedTab == 0 ? "ScheduleActive" : "ScheduleInactive")
-                    }
-                    .tag(0)
-                    SettingsView()
+                TabView(selection: $travelViewModel.selectedTab) {
+                    ScheduleView()
+                        .environment(travelViewModel)
+                        .environment(carrierViewModel)
                         .tabItem {
-                            Label("", image: selectedTab == 1 ? "SettingsActive" : "SettingsInactive")
+                            Label("", image: travelViewModel.selectedTab == 0 ? "ScheduleActive" : "ScheduleInactive")
+                        }
+                        .tag(0)
+                    
+                    SettingsView()
+                        .environment(settingsViewModel)
+                        .tabItem {
+                            Label("", image: travelViewModel.selectedTab == 1 ? "SettingsActive" : "SettingsInactive")
                         }
                         .tag(1)
                 }
@@ -51,45 +45,45 @@ struct ContentView: View {
                 switch destination {
                 case .cities(let isSelectingFrom):
                     CitiesView(
-                        selectedCity: isSelectingFrom ? $fromCity : $toCity,
-                        selectedStation: isSelectingFrom ? $fromStation : $toStation,
+                        selectedCity: isSelectingFrom ? $travelViewModel.fromCity : $travelViewModel.toCity,
+                        selectedStation: isSelectingFrom ? $travelViewModel.fromStation : $travelViewModel.toStation,
                         isSelectingFrom: isSelectingFrom,
-                        navigationPath: $navigationPath
+                        navigationPath: $travelViewModel.navigationPath
                     )
                     .toolbar(.hidden, for: .tabBar)
                 case .stations(let city, let isSelectingFrom):
                     RailwayStationsView(
                         selectedCity: city,
-                        selectedStation: isSelectingFrom ? $fromStation : $toStation,
-                        navigationPath: $navigationPath
+                        selectedStation: isSelectingFrom ? $travelViewModel.fromStation : $travelViewModel.toStation,
+                        navigationPath: $travelViewModel.navigationPath
                     )
                     .toolbar(.hidden, for: .tabBar)
                 case .carriers(let fromCity, let fromStation, let toCity, let toStation):
                     CarriersListView(
-                        viewModel: carrierViewModel,
                         fromCity: fromCity,
                         fromStation: fromStation,
                         toCity: toCity,
                         toStation: toStation,
-                        navigationPath: $navigationPath
+                        navigationPath: $travelViewModel.navigationPath
                     )
+                    .environment(carrierViewModel)
                     .toolbar(.hidden, for: .tabBar)
                 case .filters(let fromCity, let fromStation, let toCity, let toStation):
                     FiltersView(
-                        viewModel: carrierViewModel,
                         fromCity: fromCity,
                         fromStation: fromStation,
                         toCity: toCity,
                         toStation: toStation,
-                        navigationPath: $navigationPath
-                        )
+                        navigationPath: $travelViewModel.navigationPath
+                    )
+                    .environment(carrierViewModel)
                 case .carrierDetail(let route):
-                    CarrierDetailView(route: route, navigationPath: $navigationPath)
-                    
-                    .toolbar(.hidden, for: .tabBar)
+                    CarrierDetailView(route: route, navigationPath: $travelViewModel.navigationPath)
+                        .toolbar(.hidden, for: .tabBar)
                 }
             }
         }
+        .preferredColorScheme(settingsViewModel.colorScheme)
     }
 
     enum Destination: Hashable {
