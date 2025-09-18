@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CarriersListView: View {
-    @ObservedObject var viewModel: CarrierRouteViewModel
+    @Environment(CarrierRouteViewModel.self) private var viewModel
     let fromCity: Cities
     let fromStation: RailwayStations
     let toCity: Cities
@@ -88,11 +88,11 @@ struct CarriersListView: View {
 
 #Preview {
     CarriersListView(
-        viewModel: CarrierRouteViewModel(),
         fromCity: Cities(cityName: "Москва"),
         fromStation: RailwayStations(RailwayStationName: "Киевский вокзал"),
         toCity: Cities(cityName: "Санкт-Петербург"),
         toStation: RailwayStations(RailwayStationName: "Московский вокзал"),
         navigationPath: .constant(NavigationPath())
     )
+    .environment(CarrierRouteViewModel())
 }

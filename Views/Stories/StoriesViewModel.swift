@@ -8,14 +8,14 @@
 import Foundation
 import SwiftUI
 import Combine
-
-class StoriesViewModel: ObservableObject {
-    @Published var story: [Stories]
-    @Published var showStoryView: Bool = false
-    @Published var currentStoryIndex: Int = 0
-    @Published var currentImageIndex: Int = 0
-    @Published var progress: CGFloat = 0.0
-    @Published var viewedStories: Set<UUID> = []
+@Observable
+class StoriesViewModel {
+     var story: [Stories]
+     var showStoryView: Bool = false
+     var currentStoryIndex: Int = 0
+     var currentImageIndex: Int = 0
+     var progress: CGFloat = 0.0
+     var viewedStories: Set<UUID> = []
     
     
     private var timer: Timer.TimerPublisher = Timer.publish(every: 0.05, on: .main, in: .common)

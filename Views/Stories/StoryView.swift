@@ -9,7 +9,7 @@ import SwiftUI
 import Combine
 
 struct StoryView: View {
-    @ObservedObject var viewModel: StoriesViewModel
+    @Bindable var viewModel: StoriesViewModel
     @Environment(\.dismiss) var dismiss
     
     var body: some View {

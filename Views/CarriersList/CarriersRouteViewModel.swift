@@ -17,11 +17,11 @@ struct CarrierRoute: Identifiable, Hashable {
     var email: String
     var phone: String
 }
-
-class CarrierRouteViewModel: ObservableObject {
-    @Published var routes: [CarrierRoute]
-    @Published var selectedPeriods: Set<PeriodofTime> = []
-    @Published var showWithTransfer: Bool? = nil // тут nil означает что фильтр пересадок не был применен
+@Observable
+class CarrierRouteViewModel {
+     var routes: [CarrierRoute]
+     var selectedPeriods: Set<PeriodofTime> = []
+     var showWithTransfer: Bool? = nil // тут nil означает что фильтр пересадок не был применен
     
     init() {
         self.routes = [
