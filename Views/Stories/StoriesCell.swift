@@ -1,9 +1,4 @@
-//
-//  StoriesCell.swift
-//  Travel Schedule
-//
-//  Created by Дионисий Коневиченко on 22.07.2025.
-//
+
 
 import SwiftUI
 
@@ -11,7 +6,7 @@ struct StoriesCell: View {
     var stories: Stories
     let imageHeight: Double = 140
     let imageWidth: Double = 92
-    @EnvironmentObject var viewModel: StoriesViewModel
+    @Environment(StoriesViewModel.self) private var viewModel
     var body: some View {
         ZStack(alignment: .leading){
             
@@ -54,5 +49,5 @@ struct StoriesCell: View {
 
 #Preview {
     StoriesCell(stories: Stories(previewImage: "ConductorGirlPreview", images: ["ConductorGirlBig", "ConductorGirlTwoBig"]))
-        .environmentObject(StoriesViewModel())
+        .environment(StoriesViewModel())
 }

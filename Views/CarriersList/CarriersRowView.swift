@@ -14,10 +14,13 @@ struct CarriersRowView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .top) {
-                Image(route.carrierImage)
-                    .resizable()
-                    .frame(width: 38, height: 38)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                AsyncImageView(
+                    url: route.carrierLogoUrl,
+                    placeholder: route.carrierImage,
+                    width: 38,
+                    height: 38,
+                    cornerRadius: 12
+                )
                 VStack(alignment: .leading, spacing: 2) {
                     Text(route.carrierName)
                         .font(.system(size: 17, weight: .regular))

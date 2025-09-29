@@ -1,9 +1,4 @@
-//
-//  CarrierDetailView.swift
-//  Travel Schedule
-//
-//  Created by Дионисий Коневиченко on 08.08.2025.
-//
+
 
 import SwiftUI
 
@@ -13,13 +8,16 @@ struct CarrierDetailView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             
-            Image( "carrierDetailMock")
-                .resizable()
-                .frame(width: 343, height: 104)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+            AsyncImageView(
+                url: route.carrierLogoUrl,
+                placeholder: "carrierDetailMock",
+                width: 343,
+                height: 104,
+                cornerRadius: 16
+            )
             Text("ОАО «\(route.carrierName)")
                 .font(.system(size: 24, weight: .bold))
-                .foregroundStyle(.blackUniversal)
+                .foregroundStyle(.blackDay)
 
             
             VStack(alignment: .leading, spacing: 8) {
@@ -72,9 +70,10 @@ struct CarrierDetailView: View {
             duration: "20 часов",
             withTransfer: true,
             carrierImage: "RJDmock",
+            carrierLogoUrl: "https://yastat.net/s3/rasp/media/data/company/logo/112.png",
             note: "С пересадкой в Костроме",
             email: "info@rzd.ru",
             phone: "+7 800 775-00-00"
         ), navigationPath: .constant(NavigationPath())
     )
-} 
+}

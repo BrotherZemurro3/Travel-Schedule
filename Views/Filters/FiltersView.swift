@@ -1,24 +1,11 @@
-//
-//  FiltersView.swift
-//  Travel Schedule
-//
-//  Created by Дионисий Коневиченко on 28.07.2025.
-//
-
 
 import SwiftUI
 
 
-enum PeriodofTime: String, CaseIterable, Hashable {
-    case morning = "Утро 06:00 - 12:00"
-    case day = "День 12:00 - 18:00"
-    case evening = "Вечер 18:00 - 00:00"
-    case night = "Ночь 00:00 - 06:00"
-}
 
 struct FiltersView: View {
     
-    @ObservedObject var viewModel: CarrierRouteViewModel
+    @Environment(CarrierRouteViewModel.self) private var viewModel
     let fromCity: Cities
     let fromStation: RailwayStations
     let toCity: Cities
@@ -99,7 +86,7 @@ struct FiltersView: View {
             Button(action: {
                 navigationPath.removeLast()
             }) {
-                Text("Применить фильтры")
+                Text("Применить")
                     .font(.system(size: 17, weight: .bold))
                     .foregroundStyle(.whiteUniversal)
                     .frame(width: 343, height: 35)
@@ -128,11 +115,11 @@ struct FiltersView: View {
 
 #Preview {
     FiltersView(
-        viewModel: CarrierRouteViewModel(),
         fromCity: Cities(cityName: "Москва"),
         fromStation: RailwayStations(RailwayStationName: "Киевский вокзал"),
         toCity: Cities(cityName: "Санкт-Петербург"),
         toStation: RailwayStations(RailwayStationName: "Московский вокзал"),
         navigationPath: .constant(NavigationPath())
     )
+    .environment(CarrierRouteViewModel())
 }

@@ -1,9 +1,3 @@
-//
-//  NoInternetView.swift
-//  Travel Schedule
-//
-//  Created by Дионисий Коневиченко on 30.07.2025.
-//
 
 import SwiftUI
 

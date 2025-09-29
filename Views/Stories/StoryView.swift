@@ -1,15 +1,10 @@
-//
-//  StoryView.swift
-//  Travel Schedule
-//
-//  Created by Дионисий Коневиченко on 06.08.2025.
-//
+
 
 import SwiftUI
 import Combine
 
 struct StoryView: View {
-    @ObservedObject var viewModel: StoriesViewModel
+    @Bindable var viewModel: StoriesViewModel
     @Environment(\.dismiss) var dismiss
     
     var body: some View {

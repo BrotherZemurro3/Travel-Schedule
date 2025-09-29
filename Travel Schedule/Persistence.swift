@@ -1,9 +1,3 @@
-//
-//  Persistence.swift
-//  Travel Schedule
-//
-//  Created by Дионисий Коневиченко on 10.07.2025.
-//
 
 import CoreData
 

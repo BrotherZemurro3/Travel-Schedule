@@ -1,27 +1,23 @@
-//
-//  SettingsView.swift
-//  Travel Schedule
-//
-//  Created by Дионисий Коневиченко on 22.07.2025.
-//
+
 
 import SwiftUI
 
 struct SettingsView: View {
-    @AppStorage("theme") private var selectedTheme: Theme = .auto
+    @Environment(SettingsViewModel.self) private var settingsViewModel
+    @Environment(TravelViewModel.self) private var travelViewModel
     @Environment(\.colorScheme) private var colorScheme
-    @State private var isDarkMode: Bool = false
-    @State private var navigationPath = NavigationPath()
+
 
     var body: some View {
-        NavigationStack(path: $navigationPath) {
+        @Bindable var settingsViewModel = settingsViewModel
+        @Bindable var travelViewModel = travelViewModel
             VStack(alignment: .leading, spacing: 16) {
                 HStack {
                     Text("Тёмная тема")
                         .font(.system(size: 17, weight: .regular))
                         .foregroundStyle(.blackDay)
                     Spacer()
-                    Toggle("", isOn: $isDarkMode)
+                    Toggle("", isOn: $settingsViewModel.isDarkMode)
                         .labelsHidden()
                 }
                 .padding(.horizontal, 16)
@@ -39,7 +35,7 @@ struct SettingsView: View {
                    
                     Spacer()
                     Button(action: {
-                         navigationPath.append(SettingsDestination.agreement)
+                        travelViewModel.navigationPath.append(ContentView.Destination.settings(destination: .agreement))
                     }) { Image(systemName: "chevron.forward")
                             .foregroundStyle(.blackDay)
                     }
@@ -51,7 +47,7 @@ struct SettingsView: View {
                 }
                 
                 Button(action: {
-                    navigationPath.append(SettingsDestination.noInternet)
+                    travelViewModel.navigationPath.append(ContentView.Destination.settings(destination: .noInternet))
                 }) {
                     Text("Показать экран 'Нет интернета'")
                         .font(.system(size: 17, weight: .regular))
@@ -64,7 +60,7 @@ struct SettingsView: View {
                 }
                 
                 Button(action: {
-                    navigationPath.append(SettingsDestination.serverError)
+                    travelViewModel.navigationPath.append(ContentView.Destination.settings(destination: .serverError))
                 }) {
                     Text("Показать экран 'Ошибка сервера'")
                         .font(.system(size: 17, weight: .regular))
@@ -77,6 +73,9 @@ struct SettingsView: View {
                 }
 
                 Spacer()
+                
+                Spacer().frame(height: 20)
+                
                 VStack(alignment: .center, spacing: 16){
                     Text("Приложение использует API «Яндекс.Расписания»")
                         .font(.system(size: 12, weight: .regular))
@@ -92,41 +91,18 @@ struct SettingsView: View {
                 .padding(.horizontal, 30)
                 }
             .toolbar(.visible, for: .tabBar)
-            .preferredColorScheme(selectedTheme == .auto ? nil : (selectedTheme == .dark ? .dark : .light))
+            .preferredColorScheme(settingsViewModel.colorScheme)
             .onAppear {
-                // Устанавливаю начальное состояние Toggle
-                isDarkMode = selectedTheme == .dark || (selectedTheme == .auto && colorScheme == .dark)
+                settingsViewModel.isDarkMode = settingsViewModel.selectedTheme == .dark ||
+                    (settingsViewModel.selectedTheme == .auto && colorScheme == .dark)
             }
-            .onChange(of: isDarkMode) { newValue in
-                // Обновляю selectedTheme при изменении Toggle
-                selectedTheme = newValue ? .dark : .light
+            .onChange(of: settingsViewModel.isDarkMode) { newValue in
+                settingsViewModel.updateDarkMode(newValue)
             }
             .onChange(of: colorScheme) { newValue in
-                // Обновляю isDarkMode при изменении системной темы, если selectedTheme == .auto
-                if selectedTheme == .auto {
-                    isDarkMode = newValue == .dark
-                }
+                settingsViewModel.updateToggleForSystemTheme(newValue)
             }
-            .navigationDestination(for: SettingsDestination.self) { destination in
-                Group {
-                    switch destination {
-                    case .noInternet:
-                        NoInternetView(navigationPath: $navigationPath)
-                    case .serverError:
-                        ServerErrorView(navigationPath: $navigationPath)
-                    case .agreement:
-                        AgreementView(navigationPath: $navigationPath)
-
-                    }
-                }
-            }
-        }
     }
-enum SettingsDestination: Hashable {
-     case noInternet
-     case serverError
-    case agreement
- }
 }
 #Preview {
     SettingsView()

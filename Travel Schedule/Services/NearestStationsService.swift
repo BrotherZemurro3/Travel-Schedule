@@ -6,7 +6,7 @@ typealias NearestStations = Components.Schemas.Stations
 
 protocol NearestStationsServiceProtocol {
     
-    // Функция для получения старнций, асинхронная и может выбросить ошибку
+  
     
     func getNearestStations(lat: Double, lng: Double, distance: Int) async throws -> NearestStations
 }

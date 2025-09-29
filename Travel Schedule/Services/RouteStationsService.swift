@@ -1,9 +1,4 @@
-//
-//  RouteStationsService.swift
-//  Travel Schedule
-//
-//  Created by Дионисий Коневиченко on 14.07.2025.
-//
+
 
 import OpenAPIRuntime
 import OpenAPIURLSession
